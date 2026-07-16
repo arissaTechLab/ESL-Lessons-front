@@ -19,9 +19,9 @@ export function Hero() {
         </h1>
 
         <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-600 dark:text-slate-300">
-          A modern starter for the ESL Lessons platform. Interactive, responsive,
-          and ready to grow — begin with the essentials and level up at your own
-          pace.
+          A modern starter for the ESL Lessons platform. Interactive,
+          responsive, and ready to grow — begin with the essentials and level up
+          at your own pace.
         </p>
 
         <div className="mt-10 flex flex-wrap items-center justify-center gap-4">

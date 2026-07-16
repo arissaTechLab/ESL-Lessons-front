@@ -13,7 +13,8 @@ const FEATURES: readonly Feature[] = [
   {
     emoji: '🎨',
     title: 'Tailwind CSS v4',
-    description: 'Utility-first styling with the new CSS-first engine — no config file.',
+    description:
+      'Utility-first styling with the new CSS-first engine — no config file.',
   },
   {
     emoji: '🧩',
@@ -23,7 +24,8 @@ const FEATURES: readonly Feature[] = [
   {
     emoji: '🌗',
     title: 'Light & dark mode',
-    description: 'A persisted, class-based theme that respects system preference.',
+    description:
+      'A persisted, class-based theme that respects system preference.',
   },
 ]
 

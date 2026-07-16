@@ -5,7 +5,8 @@ export const LESSONS: readonly Lesson[] = [
     id: 'greetings',
     title: 'Greetings & Introductions',
     level: 'Beginner',
-    description: 'Say hello, introduce yourself, and start simple conversations.',
+    description:
+      'Say hello, introduce yourself, and start simple conversations.',
     durationMin: 15,
     emoji: '👋',
   },
