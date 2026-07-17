@@ -3,22 +3,50 @@
 /* Enable class-based dark mode (toggle by adding `.dark` on <html>). */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* Design tokens — exposed as Tailwind utilities (e.g. bg-brand-500, font-sans). */
+/*
+ * Design tokens — exposed as Tailwind utilities.
+ * Brand palette (single source of truth):
+ *   orange #FF991C · green #C2D1B8 · text #27170C
+ * Typography: Poppins (headings) · Inter (body)
+ */
 @theme {
   --font-sans:
     'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
     sans-serif;
+  --font-heading:
+    'Poppins', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    sans-serif;
 
-  --color-brand-50: oklch(0.97 0.02 255);
-  --color-brand-100: oklch(0.93 0.04 255);
-  --color-brand-200: oklch(0.87 0.08 255);
-  --color-brand-300: oklch(0.79 0.12 255);
-  --color-brand-400: oklch(0.7 0.16 255);
-  --color-brand-500: oklch(0.62 0.19 255);
-  --color-brand-600: oklch(0.54 0.2 255);
-  --color-brand-700: oklch(0.46 0.18 255);
-  --color-brand-800: oklch(0.39 0.15 255);
-  --color-brand-900: oklch(0.32 0.11 255);
+  /* 🟠 Brand — orange (#FF991C is brand-500) */
+  --color-brand-50: #fff5e6;
+  --color-brand-100: #ffe7c2;
+  --color-brand-200: #ffd599;
+  --color-brand-300: #ffc066;
+  --color-brand-400: #ffab3d;
+  --color-brand-500: #ff991c;
+  --color-brand-600: #e88410;
+  --color-brand-700: #c26d0c;
+  --color-brand-800: #995609;
+  --color-brand-900: #7a4407;
+
+  /* 🟢 Accent — green (#C2D1B8 is accent-300) */
+  --color-accent-50: #f5f8f2;
+  --color-accent-100: #eaf0e4;
+  --color-accent-200: #dae4cf;
+  --color-accent-300: #c2d1b8;
+  --color-accent-400: #a6bb98;
+  --color-accent-500: #8aa279;
+  --color-accent-600: #6d8560;
+  --color-accent-700: #56684c;
+  --color-accent-800: #45543e;
+
+  /* 🟤 Ink — text (#27170C) + soft variants for secondary copy */
+  --color-ink: #27170c;
+  --color-ink-soft: #574636;
+  --color-ink-muted: #8a7a6b;
+
+  /* Warm page background */
+  --color-cream: #fbf5ea;
 }
 
 @layer base {
@@ -27,7 +55,6 @@
   }
 
   body {
-    @apply bg-slate-50 font-sans text-slate-800 antialiased;
-    @apply dark:bg-slate-950 dark:text-slate-200;
+    @apply bg-cream font-sans text-ink antialiased;
   }
 }

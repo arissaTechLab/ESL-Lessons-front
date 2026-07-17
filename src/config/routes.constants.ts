@@ -4,6 +4,7 @@
  */
 export const APP_ROUTES = {
   HOME: '/',
+  ABOUT: '/about',
 } as const
 
 export type AppRoute = (typeof APP_ROUTES)[keyof typeof APP_ROUTES]

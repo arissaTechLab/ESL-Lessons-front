@@ -1,2 +1,7 @@
 export { Hero } from './Hero'
-export { FeaturesSection } from './FeaturesSection'
+export { WhatIOfferSection } from './WhatIOfferSection'
+export { HowToUseSection } from './HowToUseSection'
+export { StatsSection } from './StatsSection'
+export { AboutSection } from './AboutSection'
+export { TestimonialsSection } from './TestimonialsSection'
+export { CtaSection } from './CtaSection'

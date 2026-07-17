@@ -1,16 +1,27 @@
-import { Hero, FeaturesSection } from '@/features/landing/components'
-import { LessonsSection } from '@/features/lessons'
+import {
+  Hero,
+  WhatIOfferSection,
+  HowToUseSection,
+  StatsSection,
+  AboutSection,
+  TestimonialsSection,
+  CtaSection,
+} from '@/features/landing/components'
 
 /**
- * Public landing page. Composes the landing sections with the `lessons`
- * feature — imported through its public API, never its internals.
+ * Public landing page. Composes the landing sections top-to-bottom:
+ * hero → offer → how-to-use → stats → about → testimonials → CTA.
  */
 export function LandingPage() {
   return (
     <>
       <Hero />
-      <LessonsSection />
-      <FeaturesSection />
+      <WhatIOfferSection />
+      <HowToUseSection />
+      <StatsSection />
+      <AboutSection />
+      <TestimonialsSection />
+      <CtaSection />
     </>
   )
 }
