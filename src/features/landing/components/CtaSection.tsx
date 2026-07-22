@@ -1,4 +1,6 @@
-import { Button } from '@/shared/components'
+import { Link } from 'react-router-dom'
+import { buttonVariants } from '@/shared/components'
+import { APP_ROUTES } from '@/config/routes.constants'
 
 export function CtaSection() {
   return (
@@ -12,9 +14,12 @@ export function CtaSection() {
         <p className="mt-4 text-ink-soft">
           Start teaching with confidence — no prep required.
         </p>
-        <Button variant="primary" className="mt-8">
+        <Link
+          to={APP_ROUTES.SIGNUP}
+          className={buttonVariants('primary', 'md', 'mt-8')}
+        >
           Sign up
-        </Button>
+        </Link>
       </div>
     </section>
   )

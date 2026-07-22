@@ -5,6 +5,16 @@
 export const APP_ROUTES = {
   HOME: '/',
   ABOUT: '/about',
+  // Resources (navbar dropdown)
+  GOOGLE_SLIDES: '/resources/google-slides',
+  TEACHING_IDEAS: '/resources/teaching-ideas',
+  // Support / legal
+  FAQ: '/faq',
+  PRIVACY_POLICY: '/privacy-policy',
+  TERMS_OF_SERVICE: '/terms-of-service',
+  // Auth
+  LOGIN: '/login',
+  SIGNUP: '/signup',
 } as const
 
 export type AppRoute = (typeof APP_ROUTES)[keyof typeof APP_ROUTES]

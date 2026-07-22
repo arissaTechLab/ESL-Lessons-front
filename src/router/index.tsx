@@ -3,6 +3,13 @@ import { RootLayout } from '@/layout'
 import { APP_ROUTES } from '@/config/routes.constants'
 import { LandingPage } from '@/features/landing'
 import { AboutPage } from '@/features/about'
+import {
+  GoogleSlidesTutorialPage,
+  TeachingIdeasPage,
+} from '@/features/resources'
+import { FaqPage } from '@/features/faq'
+import { PrivacyPolicyPage, TermsOfServicePage } from '@/features/legal'
+import { LoginPage, SignUpPage } from '@/features/auth'
 
 /**
  * Application router. Each feature plugs its pages in here through its
@@ -15,6 +22,14 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <LandingPage /> },
       { path: APP_ROUTES.ABOUT, element: <AboutPage /> },
+      { path: APP_ROUTES.GOOGLE_SLIDES, element: <GoogleSlidesTutorialPage /> },
+      { path: APP_ROUTES.TEACHING_IDEAS, element: <TeachingIdeasPage /> },
+      { path: APP_ROUTES.FAQ, element: <FaqPage /> },
+      { path: APP_ROUTES.PRIVACY_POLICY, element: <PrivacyPolicyPage /> },
+      { path: APP_ROUTES.TERMS_OF_SERVICE, element: <TermsOfServicePage /> },
     ],
   },
+  // Auth pages render standalone (no navbar/footer).
+  { path: APP_ROUTES.LOGIN, element: <LoginPage /> },
+  { path: APP_ROUTES.SIGNUP, element: <SignUpPage /> },
 ])

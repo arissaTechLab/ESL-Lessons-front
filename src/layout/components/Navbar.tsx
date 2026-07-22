@@ -1,12 +1,15 @@
 import { Link } from 'react-router-dom'
-import { Button } from '@/shared/components'
+import { buttonVariants } from '@/shared/components'
 import { APP_ROUTES } from '@/config/routes.constants'
 
 const NAV_LINKS = [
   { label: 'All Lessons', href: '#lessons' },
   { label: 'Grammar Index', href: '#grammar' },
-  { label: 'Resources', href: '#resources' },
-  { label: 'Pricing', href: '#pricing' },
+] as const
+
+const RESOURCE_LINKS = [
+  { label: 'Google Slides Tutorial', to: APP_ROUTES.GOOGLE_SLIDES },
+  { label: 'How to & Teaching Ideas', to: APP_ROUTES.TEACHING_IDEAS },
 ] as const
 
 /** Simple tree logo mark. */
@@ -21,6 +24,48 @@ function LogoMark() {
       <path d="M12 2 6 10h3l-4 6h4l-4 6h14l-4-6h4l-4-6h3L12 2Z" />
       <rect x="11" y="19" width="2" height="3" />
     </svg>
+  )
+}
+
+/** "Resources" nav item with a hover/focus dropdown submenu. */
+function ResourcesMenu() {
+  return (
+    <div className="group relative">
+      <button
+        type="button"
+        className="flex items-center gap-1 uppercase tracking-wide transition hover:text-brand-600 group-focus-within:text-brand-600 group-hover:text-brand-600"
+        aria-haspopup="menu"
+      >
+        Resources
+        <svg
+          viewBox="0 0 24 24"
+          className="size-3.5 transition group-hover:rotate-180"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </button>
+
+      {/* Menu (pt-3 forms an invisible hover bridge to the trigger) */}
+      <div className="invisible absolute left-1/2 top-full z-30 -translate-x-1/2 pt-3 opacity-0 transition group-focus-within:visible group-focus-within:opacity-100 group-hover:visible group-hover:opacity-100">
+        <div className="w-64 rounded-xl border border-ink/10 bg-cream p-2 shadow-lg">
+          {RESOURCE_LINKS.map((link) => (
+            <Link
+              key={link.to}
+              to={link.to}
+              className="block rounded-lg px-3 py-2 text-sm font-medium normal-case tracking-normal text-ink-soft transition hover:bg-ink/5 hover:text-brand-600"
+            >
+              {link.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -54,16 +99,29 @@ export function Navbar() {
               {link.label}
             </a>
           ))}
+          <ResourcesMenu />
+          <a
+            href="#pricing"
+            className="uppercase tracking-wide transition hover:text-brand-600"
+          >
+            Pricing
+          </a>
         </nav>
 
         {/* Auth actions */}
         <div className="flex items-center gap-2">
-          <Button variant="tertiary" size="sm">
+          <Link
+            to={APP_ROUTES.LOGIN}
+            className={buttonVariants('tertiary', 'sm')}
+          >
             Log in
-          </Button>
-          <Button variant="secondary" size="sm">
+          </Link>
+          <Link
+            to={APP_ROUTES.SIGNUP}
+            className={buttonVariants('secondary', 'sm')}
+          >
             Sign up
-          </Button>
+          </Link>
         </div>
       </div>
     </header>

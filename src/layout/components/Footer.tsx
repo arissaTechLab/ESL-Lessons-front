@@ -1,13 +1,36 @@
-const FOOTER_COLUMNS = [
+import { Link } from 'react-router-dom'
+import { APP_ROUTES } from '@/config/routes.constants'
+
+/** `to` points to an internal route; links without it are placeholders. */
+interface FooterLink {
+  label: string
+  to?: string
+}
+
+const FOOTER_COLUMNS: readonly {
+  heading: string
+  links: readonly FooterLink[]
+}[] = [
   {
     heading: 'Explore',
-    links: ['All Lessons', 'Grammar Index', 'Method & Teaching Ideas', 'About'],
+    links: [
+      { label: 'All Lessons' },
+      { label: 'Grammar Index' },
+      { label: 'Google Slides Tutorial', to: APP_ROUTES.GOOGLE_SLIDES },
+      { label: 'Method & Teaching Ideas', to: APP_ROUTES.TEACHING_IDEAS },
+      { label: 'About', to: APP_ROUTES.ABOUT },
+    ],
   },
   {
     heading: 'Support',
-    links: ['FAQ', 'Privacy Policy', 'Terms of Service', 'Contact me'],
+    links: [
+      { label: 'FAQ', to: APP_ROUTES.FAQ },
+      { label: 'Privacy Policy', to: APP_ROUTES.PRIVACY_POLICY },
+      { label: 'Terms of Service', to: APP_ROUTES.TERMS_OF_SERVICE },
+      { label: 'Contact me' },
+    ],
   },
-] as const
+]
 
 function SocialIcon({ path, label }: { path: string; label: string }) {
   return (
@@ -87,13 +110,19 @@ export function Footer() {
               </h3>
               <ul className="mt-4 space-y-3 text-sm text-ink-soft">
                 {column.links.map((link) => (
-                  <li key={link}>
-                    <a
-                      href="#"
-                      className="transition hover:text-brand-600"
-                    >
-                      {link}
-                    </a>
+                  <li key={link.label}>
+                    {link.to ? (
+                      <Link
+                        to={link.to}
+                        className="transition hover:text-brand-600"
+                      >
+                        {link.label}
+                      </Link>
+                    ) : (
+                      <a href="#" className="transition hover:text-brand-600">
+                        {link.label}
+                      </a>
+                    )}
                   </li>
                 ))}
               </ul>

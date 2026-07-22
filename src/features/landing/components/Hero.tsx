@@ -1,13 +1,14 @@
-import { Placeholder, buttonVariants } from '@/shared/components'
+import { buttonVariants } from '@/shared/components'
 
 export function Hero() {
   return (
     <section className="relative isolate overflow-hidden">
-      {/* Background image — supplied later */}
+      {/* Background image */}
       <div className="absolute inset-0 -z-10">
-        <Placeholder
-          label="Hero image"
-          className="h-full w-full rounded-none border-0 bg-accent-200"
+        <img
+          src="/hero-bg.webp"
+          alt=""
+          className="h-full w-full object-cover"
         />
       </div>
 

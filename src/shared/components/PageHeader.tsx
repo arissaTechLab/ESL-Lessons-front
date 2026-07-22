@@ -1,12 +1,10 @@
-import { Placeholder } from './Placeholder'
-
 interface PageHeaderProps {
   /** Main heading — the only piece that changes between subpages. */
   title: string
   /** Optional supporting line under the title. */
   subtitle?: string
-  /** Label shown inside the background image placeholder. */
-  imageLabel?: string
+  /** Background image. Defaults to the shared subpage header image. */
+  imageSrc?: string
 }
 
 /**
@@ -16,16 +14,13 @@ interface PageHeaderProps {
 export function PageHeader({
   title,
   subtitle,
-  imageLabel = 'Header image',
+  imageSrc = '/header_pages.webp',
 }: PageHeaderProps) {
   return (
     <section className="relative isolate overflow-hidden bg-ink">
-      {/* Background image — supplied later */}
+      {/* Background image */}
       <div className="absolute inset-0 -z-20">
-        <Placeholder
-          label={imageLabel}
-          className="h-full w-full rounded-none border-0 bg-accent-700"
-        />
+        <img src={imageSrc} alt="" className="h-full w-full object-cover" />
       </div>
       <div className="absolute inset-0 -z-10 bg-ink/55" aria-hidden="true" />
 
