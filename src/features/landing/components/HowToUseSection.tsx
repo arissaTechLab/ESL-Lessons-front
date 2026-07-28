@@ -6,11 +6,11 @@ export function HowToUseSection() {
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <h2 className="font-heading text-3xl font-bold text-ink sm:text-4xl">
-            How to use the lessons
+            How are these lessons different?
           </h2>
           <p className="max-w-md text-sm text-ink-soft">
-            Take a peek inside a real lesson. You’ll see how every slide is
-            designed to be clear, engaging, and ready to go.
+            Teaching online speaking lessons? There’s nothing else like these
+            lesson materials!
           </p>
         </div>
 

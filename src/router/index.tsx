@@ -3,6 +3,7 @@ import { RootLayout } from '@/layout'
 import { APP_ROUTES } from '@/config/routes.constants'
 import { LandingPage } from '@/features/landing'
 import { AboutPage } from '@/features/about'
+import { AllLessonsPage } from '@/features/lessons'
 import {
   GoogleSlidesTutorialPage,
   TeachingIdeasPage,
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <LandingPage /> },
       { path: APP_ROUTES.ABOUT, element: <AboutPage /> },
+      { path: APP_ROUTES.ALL_LESSONS, element: <AllLessonsPage /> },
       { path: APP_ROUTES.GOOGLE_SLIDES, element: <GoogleSlidesTutorialPage /> },
       { path: APP_ROUTES.TEACHING_IDEAS, element: <TeachingIdeasPage /> },
       { path: APP_ROUTES.FAQ, element: <FaqPage /> },

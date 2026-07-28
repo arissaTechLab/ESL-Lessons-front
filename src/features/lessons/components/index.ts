@@ -1,2 +1,5 @@
-export { LessonsSection } from './LessonsSection'
-export { LessonCard } from './LessonCard'
+export { LessonCard, SeriesIcon } from './LessonCard'
+export { LessonLevelBadge } from './LessonLevelBadge'
+export { CategoryCard } from './CategoryCard'
+export { LessonFilters } from './LessonFilters'
+export type { LessonFiltersState } from './LessonFilters'

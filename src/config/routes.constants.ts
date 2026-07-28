@@ -5,6 +5,7 @@
 export const APP_ROUTES = {
   HOME: '/',
   ABOUT: '/about',
+  ALL_LESSONS: '/lessons',
   // Resources (navbar dropdown)
   GOOGLE_SLIDES: '/resources/google-slides',
   TEACHING_IDEAS: '/resources/teaching-ideas',

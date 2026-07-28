@@ -7,13 +7,11 @@ export function CtaSection() {
     <section id="pricing" className="scroll-mt-20 bg-accent-300">
       <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6">
         <h2 className="font-heading text-3xl font-bold leading-tight text-ink sm:text-4xl">
-          Ready to Save Time and
+          Ready for a Vacation
           <br />
-          Teach Better Lessons?
+          from Lesson Prep?
         </h2>
-        <p className="mt-4 text-ink-soft">
-          Start teaching with confidence — no prep required.
-        </p>
+        <p className="mt-4 text-ink-soft">Just rock up and teach.</p>
         <Link
           to={APP_ROUTES.SIGNUP}
           className={buttonVariants('primary', 'md', 'mt-8')}

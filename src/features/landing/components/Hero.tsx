@@ -20,12 +20,12 @@ export function Hero() {
             ESL students
           </h1>
           <p className="mt-4 font-heading text-xl font-semibold text-brand-500 sm:text-2xl">
-            With ZERO prep-time
+            with ZERO prep time
           </p>
           <p className="mt-5 text-base text-ink-soft">
-            ESL lesson plans for English language teachers with intermediate to
-            advanced adult students. Visual grammar, podcast, and story-based
-            lessons. Phrasal verb deep dives.
+            Finally, ESL lesson materials for your 1-on-1 speaking lessons! Give
+            structure and review to your fun and fascinating conversation
+            lessons. Materials made with love, and big deep dive energy.
           </p>
           <a href="#offer" className={buttonVariants('primary', 'md', 'mt-8')}>
             Get free lessons

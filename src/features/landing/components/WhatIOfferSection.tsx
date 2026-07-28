@@ -1,4 +1,4 @@
-import { Placeholder, buttonVariants } from '@/shared/components'
+import { buttonVariants } from '@/shared/components'
 
 interface Offer {
   title: string
@@ -7,39 +7,32 @@ interface Offer {
 
 const OFFERS: readonly Offer[] = [
   {
-    title: 'Dynamic Discussions',
-    description:
-      'Thought-provoking questions for fluency in informal and professional life.',
+    title: 'Podcast-Based Units',
+    description: 'Advanced collocations and deep discussion questions.',
   },
   {
-    title: 'Grammar in context',
+    title: 'Story-Based Units',
     description:
-      'Death to worksheets. Students speak with target grammar in illustrated role-plays.',
+      'GIfs and imagery replace definitions to anchor new vocab and get students talking.',
   },
   {
-    title: 'Accelerated Vocab Acquisition',
-    description:
-      'Image-rich exercises enable students to start speaking with new words as soon as they’re introduced.',
+    title: 'Phrasal Verb Deep Dives',
+    description: '100% image-based prompts to keep the focus on speaking.',
   },
   {
-    title: 'Vocab Retention',
+    title: 'Visual Grammar',
     description:
-      'Spaced repetition ensures students master vocabulary — a layered review system that shows progress lesson to lesson.',
+      'Open-ended prompts mean students speak with target grammar in context. Death to worksheets!',
   },
   {
-    title: 'Authentic Listening & Collocations',
+    title: 'Pronunciation',
     description:
-      'Challenge advanced learners with real-world vocab curated from the top podcasts.',
+      'Those Minimal Pairs activites you´ve been meaning to make more comprehensive and aesthetic? Done!',
   },
   {
-    title: 'Phrasal Verb Mastery',
+    title: 'The Complete Package',
     description:
-      'Students can finally speak confidently with phrasal verbs through image-based exercises.',
-  },
-  {
-    title: 'Time-Saving Teacher’s Guides',
-    description:
-      'Get clear instructions, answer keys, and life-changing extension ideas.',
+      'Every lesson includes spaced repetition for vocab retention, ready-to-use homeworkm and a step-by-step teacher´s guide.',
   },
 ]
 
@@ -48,23 +41,20 @@ export function WhatIOfferSection() {
     <section id="offer" className="scroll-mt-20">
       <div className="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 lg:grid-cols-2 lg:items-start">
         {/* Image collage — supplied later */}
-        <div className="grid grid-cols-2 gap-3">
-          <Placeholder label="Photo" className="col-span-2 aspect-[16/10]" />
-          <Placeholder label="Photo" className="aspect-[4/5]" />
-          <Placeholder label="Photo" className="aspect-[4/5]" />
-        </div>
+        <img
+          src="/offer-img.webp"
+          alt=""
+          className="aspect-[4/5] w-full rounded-2xl object-cover"
+        />
 
         {/* Copy */}
         <div>
-          <p className="font-heading text-sm font-semibold uppercase tracking-[0.2em] text-brand-500">
-            What I offer
-          </p>
           <h2 className="mt-3 font-heading text-3xl font-bold leading-tight text-ink sm:text-4xl">
-            Finally, ESL Lessons That Engage Students &amp; Save You Hours
+            Finally, ESL Materials Made for Your 1-on-1 Speaking Lessons!
+            <p className="text-brand-500">Never. Prep. Again.</p>
           </h2>
           <p className="mt-4 text-ink-soft">
-            Tired of searching for extraordinary material for your online ESL
-            classes? Get curiously fresh lessons — ready in seconds.
+            The structure & review your students want - no boring worksheets.
           </p>
 
           <ul className="mt-8 space-y-4">
@@ -75,16 +65,17 @@ export function WhatIOfferSection() {
                   aria-hidden="true"
                 />
                 <p className="text-sm text-ink-soft">
-                  <span className="font-semibold text-ink">
-                    {offer.title}:
-                  </span>{' '}
+                  <span className="font-semibold text-ink">{offer.title}:</span>{' '}
                   {offer.description}
                 </p>
               </li>
             ))}
           </ul>
 
-          <a href="#pricing" className={buttonVariants('primary', 'md', 'mt-8')}>
+          <a
+            href="#pricing"
+            className={buttonVariants('primary', 'md', 'mt-8')}
+          >
             Get free lessons
           </a>
         </div>

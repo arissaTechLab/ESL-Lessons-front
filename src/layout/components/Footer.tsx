@@ -14,7 +14,7 @@ const FOOTER_COLUMNS: readonly {
   {
     heading: 'Explore',
     links: [
-      { label: 'All Lessons' },
+      { label: 'All Lessons', to: APP_ROUTES.ALL_LESSONS },
       { label: 'Grammar Index' },
       { label: 'Google Slides Tutorial', to: APP_ROUTES.GOOGLE_SLIDES },
       { label: 'Method & Teaching Ideas', to: APP_ROUTES.TEACHING_IDEAS },
@@ -73,20 +73,11 @@ export function Footer() {
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand + socials */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2">
-              <svg
-                viewBox="0 0 24 24"
-                className="size-7 text-ink"
-                fill="currentColor"
-                aria-hidden="true"
-              >
-                <path d="M12 2 6 10h3l-4 6h4l-4 6h14l-4-6h4l-4-6h3L12 2Z" />
-                <rect x="11" y="19" width="2" height="3" />
-              </svg>
-              <span className="font-heading text-lg font-bold uppercase tracking-[0.15em] text-ink">
-                ESL Lessons
-              </span>
-            </div>
+            <img
+              src="/logo_ESL.png"
+              alt="ESL Lessons"
+              className="h-10 w-auto"
+            />
             <p className="mt-4 max-w-sm text-sm text-ink-soft">
               Ready-to-teach ESL materials that engage students and save you
               hours of prep time.
