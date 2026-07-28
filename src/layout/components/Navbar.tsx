@@ -11,7 +11,7 @@ interface NavLink {
 
 const NAV_LINKS: readonly NavLink[] = [
   { label: 'All Lessons', to: APP_ROUTES.ALL_LESSONS },
-  { label: 'Grammar Index', href: '#grammar' },
+  { label: 'Grammar Index', to: APP_ROUTES.GRAMMAR_INDEX },
 ]
 
 const RESOURCE_LINKS = [

@@ -15,7 +15,7 @@ const FOOTER_COLUMNS: readonly {
     heading: 'Explore',
     links: [
       { label: 'All Lessons', to: APP_ROUTES.ALL_LESSONS },
-      { label: 'Grammar Index' },
+      { label: 'Grammar Index', to: APP_ROUTES.GRAMMAR_INDEX },
       { label: 'Google Slides Tutorial', to: APP_ROUTES.GOOGLE_SLIDES },
       { label: 'Method & Teaching Ideas', to: APP_ROUTES.TEACHING_IDEAS },
       { label: 'About', to: APP_ROUTES.ABOUT },

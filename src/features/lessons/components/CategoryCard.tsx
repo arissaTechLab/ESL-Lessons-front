@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom'
 import { Placeholder, buttonVariants } from '@/shared/components'
+import { lessonCategoryPath } from '@/config/routes.constants'
 import type { LessonCategory } from '../data/categories'
 
 /** Category card for the "All lessons: categories" section. */
@@ -13,12 +15,12 @@ export function CategoryCard({ category }: { category: LessonCategory }) {
         <h3 className="font-heading text-sm font-bold uppercase tracking-wide text-ink">
           {category.title}
         </h3>
-        <a
-          href="#"
+        <Link
+          to={lessonCategoryPath(category.id)}
           className={buttonVariants('secondary', 'md', 'mt-3 w-full')}
         >
           Explore lessons
-        </a>
+        </Link>
       </div>
     </article>
   )

@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { PageHeader } from '@/shared/components'
+import { APP_ROUTES } from '@/config/routes.constants'
 import { CtaSection } from '@/features/landing'
 import {
   LessonCard,
@@ -7,33 +9,20 @@ import {
   LessonFilters,
   type LessonFiltersState,
 } from '@/features/lessons/components'
-import {
-  LESSONS,
-  CATEGORY_OPTIONS,
-  TOPIC_OPTIONS,
-} from '@/features/lessons/data/lessons'
+import { LESSONS } from '@/features/lessons/data/lessons'
 import { LESSON_CATEGORIES } from '@/features/lessons/data/categories'
+import {
+  filterLessons,
+  sortLessons,
+} from '@/features/lessons/lib/filter-lessons'
 import type { Lesson } from '@/features/lessons/types/lesson.types'
 
 const DEFAULT_FILTERS: LessonFiltersState = {
   search: '',
-  level: 'all',
-  category: 'all',
-  topic: 'all',
+  levels: [],
+  categories: [],
+  topics: [],
   sort: 'recent',
-}
-
-function sortLessons(lessons: Lesson[], sort: string): Lesson[] {
-  const sorted = [...lessons]
-  if (sort === 'oldest') {
-    sorted.sort((a, b) => a.dateAdded.localeCompare(b.dateAdded))
-  } else if (sort === 'title') {
-    sorted.sort((a, b) => a.title.localeCompare(b.title))
-  } else {
-    // 'recent' — newest first
-    sorted.sort((a, b) => b.dateAdded.localeCompare(a.dateAdded))
-  }
-  return sorted
 }
 
 function SectionHeading({
@@ -44,7 +33,7 @@ function SectionHeading({
   action?: React.ReactNode
 }) {
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center justify-between gap-3">
       <h2 className="font-heading text-xl font-bold uppercase tracking-wide text-ink sm:text-2xl">
         {title}
       </h2>
@@ -72,31 +61,18 @@ export function AllLessonsPage() {
 
   const hasActiveFilters =
     filters.search.trim() !== '' ||
-    filters.level !== 'all' ||
-    filters.category !== 'all' ||
-    filters.topic !== 'all'
+    filters.levels.length > 0 ||
+    filters.categories.length > 0 ||
+    filters.topics.length > 0
 
-  const results = useMemo(() => {
-    const query = filters.search.trim().toLowerCase()
-    const matched = LESSONS.filter((lesson) => {
-      const matchesLevel =
-        filters.level === 'all' || lesson.level === filters.level
-      const matchesCategory =
-        filters.category === 'all' || lesson.category === filters.category
-      const matchesTopic =
-        filters.topic === 'all' || lesson.topic === filters.topic
-      const matchesQuery =
-        query === '' ||
-        lesson.title.toLowerCase().includes(query) ||
-        lesson.topic.toLowerCase().includes(query) ||
-        lesson.category.toLowerCase().includes(query)
-      return matchesLevel && matchesCategory && matchesTopic && matchesQuery
-    })
-    return sortLessons(matched, filters.sort)
-  }, [filters])
+  const results = useMemo(() => filterLessons(LESSONS, filters), [filters])
 
   const freeLessons = useMemo(
-    () => sortLessons(LESSONS.filter((lesson) => lesson.isFree), 'recent').slice(0, 4),
+    () =>
+      sortLessons(
+        LESSONS.filter((lesson) => lesson.isFree),
+        'recent',
+      ).slice(0, 4),
     [],
   )
   const recentLessons = useMemo(
@@ -108,17 +84,11 @@ export function AllLessonsPage() {
     <>
       <PageHeader
         title="Explore the lesson library"
-        subtitle="Handcrafted ESL conversation lessons ready to use, designed to spark real speaking practice and save you hours of prep."
+        subtitle="Handcrafted ESL speaking lessons designed with novelty and structure. Saving you hours of prep."
       />
 
       <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
-        <LessonFilters
-          filters={filters}
-          onChange={update}
-          onClear={clear}
-          categories={CATEGORY_OPTIONS}
-          topics={TOPIC_OPTIONS}
-        />
+        <LessonFilters filters={filters} onChange={update} onClear={clear} />
       </div>
 
       {hasActiveFilters ? (
@@ -127,8 +97,7 @@ export function AllLessonsPage() {
             title="Results"
             action={
               <span className="text-sm text-ink-muted">
-                {results.length}{' '}
-                {results.length === 1 ? 'lesson' : 'lessons'}
+                {results.length} {results.length === 1 ? 'lesson' : 'lessons'}
               </span>
             }
           />
@@ -136,9 +105,7 @@ export function AllLessonsPage() {
             <LessonGrid lessons={results} />
           ) : (
             <div className="mt-8 rounded-xl border border-dashed border-ink/20 py-16 text-center">
-              <p className="text-ink-soft">
-                No lessons match your filters.
-              </p>
+              <p className="text-ink-soft">No lessons match your filters.</p>
               <button
                 type="button"
                 onClick={clear}
@@ -155,12 +122,12 @@ export function AllLessonsPage() {
             <SectionHeading
               title="Free Lessons"
               action={
-                <a
-                  href="#"
+                <Link
+                  to={APP_ROUTES.FREE_LESSONS}
                   className="text-xs font-semibold uppercase tracking-wide text-brand-600 transition hover:text-brand-700"
                 >
                   View all free lessons →
-                </a>
+                </Link>
               }
             />
             <LessonGrid lessons={freeLessons} />

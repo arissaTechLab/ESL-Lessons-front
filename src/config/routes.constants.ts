@@ -6,6 +6,9 @@ export const APP_ROUTES = {
   HOME: '/',
   ABOUT: '/about',
   ALL_LESSONS: '/lessons',
+  FREE_LESSONS: '/lessons/free',
+  LESSON_CATEGORY: '/lessons/category/:slug',
+  GRAMMAR_INDEX: '/grammar-index',
   // Resources (navbar dropdown)
   GOOGLE_SLIDES: '/resources/google-slides',
   TEACHING_IDEAS: '/resources/teaching-ideas',
@@ -19,3 +22,6 @@ export const APP_ROUTES = {
 } as const
 
 export type AppRoute = (typeof APP_ROUTES)[keyof typeof APP_ROUTES]
+
+/** Build a concrete category page path from its slug. */
+export const lessonCategoryPath = (slug: string) => `/lessons/category/${slug}`

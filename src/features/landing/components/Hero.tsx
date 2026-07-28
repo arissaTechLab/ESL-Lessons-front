@@ -12,7 +12,7 @@ export function Hero() {
         />
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
+      <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6 sm:py-48">
         <div className="max-w-xl rounded-2xl bg-cream/90 p-8 shadow-sm backdrop-blur-sm sm:p-10">
           <h1 className="font-heading text-4xl font-extrabold uppercase leading-tight tracking-tight text-ink sm:text-5xl">
             Wow your

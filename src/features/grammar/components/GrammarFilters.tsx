@@ -1,43 +1,32 @@
 import { MultiSelectDropdown, SortDropdown } from '@/shared/components'
-import {
-  CEFR_LEVELS,
-  CATEGORY_FILTER_OPTIONS,
-  TOPIC_FILTER_OPTIONS,
-} from '../data/filters'
-import { SeriesIcon } from './LessonCard'
+import { GRAMMAR_LEVELS } from '../data/grammar'
 
-export interface LessonFiltersState {
+export interface GrammarFiltersState {
   search: string
   levels: string[]
-  categories: string[]
-  topics: string[]
   sort: string
 }
 
 const SORT_OPTIONS = [
-  { value: 'recent', label: 'Sort by Release Date' },
-  { value: 'oldest', label: 'Oldest first' },
-  { value: 'title', label: 'Title A–Z' },
+  { value: 'az', label: 'Grammar A–Z' },
+  { value: 'za', label: 'Grammar Z–A' },
 ] as const
 
-interface LessonFiltersProps {
-  filters: LessonFiltersState
-  onChange: (patch: Partial<LessonFiltersState>) => void
+interface GrammarFiltersProps {
+  filters: GrammarFiltersState
+  onChange: (patch: Partial<GrammarFiltersState>) => void
   onClear: () => void
-  /** Hide the categories dropdown (e.g. on a single-category page). */
-  showCategoryFilter?: boolean
 }
 
-export function LessonFilters({
+export function GrammarFilters({
   filters,
   onChange,
   onClear,
-  showCategoryFilter = true,
-}: LessonFiltersProps) {
+}: GrammarFiltersProps) {
   return (
     <div>
-      {/* Search + series hint */}
-      <div className="flex flex-col gap-4 pb-5 sm:flex-row sm:items-center sm:justify-between">
+      {/* Search */}
+      <div className="pb-5">
         <div className="relative w-full max-w-sm">
           <svg
             viewBox="0 0 24 24"
@@ -55,39 +44,21 @@ export function LessonFilters({
             type="search"
             value={filters.search}
             onChange={(event) => onChange({ search: event.target.value })}
-            placeholder="Search grammar or lesson topic"
-            aria-label="Search lessons"
+            placeholder="Search grammar"
+            aria-label="Search grammar"
             className="w-full rounded-full border border-ink/15 bg-cream py-2 pl-9 pr-4 text-sm text-ink placeholder:text-ink-muted focus:border-brand-500 focus:outline-none"
           />
         </div>
-        <p className="flex items-center gap-2 text-xs text-ink-muted">
-          <SeriesIcon className="size-4 text-ink-soft" />
-          Spot this icon? It means the lesson is part of a series!
-        </p>
       </div>
 
-      {/* Filter controls */}
+      {/* Controls */}
       <div className="flex flex-wrap items-center gap-3 border-y border-ink/10 py-4">
         <MultiSelectDropdown
           label="Lesson level"
           title="CEFR Levels"
-          options={CEFR_LEVELS}
+          options={GRAMMAR_LEVELS}
           selected={filters.levels}
           onApply={(values) => onChange({ levels: values })}
-        />
-        {showCategoryFilter && (
-          <MultiSelectDropdown
-            label="Lesson categories"
-            options={CATEGORY_FILTER_OPTIONS.map((c) => ({ value: c, label: c }))}
-            selected={filters.categories}
-            onApply={(values) => onChange({ categories: values })}
-          />
-        )}
-        <MultiSelectDropdown
-          label="Lesson topic"
-          options={TOPIC_FILTER_OPTIONS.map((t) => ({ value: t, label: t }))}
-          selected={filters.topics}
-          onApply={(values) => onChange({ topics: values })}
         />
         <button
           type="button"
@@ -102,6 +73,7 @@ export function LessonFilters({
             value={filters.sort}
             options={SORT_OPTIONS}
             onChange={(value) => onChange({ sort: value })}
+            label="Sort By"
           />
         </div>
       </div>
