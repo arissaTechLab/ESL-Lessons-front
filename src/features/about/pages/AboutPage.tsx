@@ -15,7 +15,7 @@ export function AboutPage() {
   return (
     <>
       <PageHeader
-        title="Why I Made These Lessons (and Other Long Stories)"
+        title="How These Lessons Came to Be"
         subtitle="Because sometimes a worksheet just won’t cut it — and neither will a short explanation."
       />
       <NoteFromLindsaySection />

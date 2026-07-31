@@ -1,4 +1,6 @@
+import { Link } from 'react-router-dom'
 import { Placeholder, buttonVariants } from '@/shared/components'
+import { lessonPath } from '@/config/routes.constants'
 import type { Lesson } from '../types/lesson.types'
 import { formatLessonDate } from '../data/lessons'
 import { LessonLevelBadge } from './LessonLevelBadge'
@@ -47,11 +49,18 @@ export function SeriesIcon({ className = 'size-4' }: { className?: string }) {
   )
 }
 
+/**
+ * The single, data-driven card used for every lesson across the site. Only the
+ * `lesson` data changes — the layout is fixed. Every slot reserves a constant
+ * height (access/series row, 2-line title, level strip, meta lines) so cards
+ * never differ in height, whether or not a lesson has a series icon.
+ */
 export function LessonCard({ lesson }: { lesson: Lesson }) {
   return (
     <article className="flex flex-col rounded-xl border border-ink/10 bg-cream p-3">
-      {/* Access badge + series marker */}
-      <div className="mb-2 flex items-center justify-between">
+      {/* Access badge + series marker — fixed height so the series icon
+          (or its absence) never changes the card height. */}
+      <div className="mb-2 flex h-7 items-center justify-between">
         {lesson.isFree ? (
           <span className="flex items-center gap-1 text-xs font-bold uppercase text-brand-600">
             <StarIcon />
@@ -84,25 +93,25 @@ export function LessonCard({ lesson }: { lesson: Lesson }) {
       </div>
 
       <div className="mt-3 space-y-0.5 text-xs text-ink-soft">
-        <p>
+        <p className="truncate">
           <span className="font-semibold text-ink">Category:</span>{' '}
           {lesson.category}
         </p>
-        <p>
+        <p className="truncate">
           <span className="font-semibold text-ink">Topic:</span> {lesson.topic}
         </p>
-        <p>
+        <p className="truncate">
           <span className="font-semibold text-ink">Date added:</span>{' '}
           {formatLessonDate(lesson.dateAdded)}
         </p>
       </div>
 
-      <a
-        href="#"
+      <Link
+        to={lessonPath(lesson.id)}
         className={buttonVariants('secondary', 'sm', 'mt-4 w-full')}
       >
         Go to lesson
-      </a>
+      </Link>
     </article>
   )
 }

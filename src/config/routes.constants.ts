@@ -8,7 +8,9 @@ export const APP_ROUTES = {
   ALL_LESSONS: '/lessons',
   FREE_LESSONS: '/lessons/free',
   LESSON_CATEGORY: '/lessons/category/:slug',
+  LESSON_DETAIL: '/lesson/:slug',
   GRAMMAR_INDEX: '/grammar-index',
+  PRICING: '/pricing',
   // Resources (navbar dropdown)
   GOOGLE_SLIDES: '/resources/google-slides',
   TEACHING_IDEAS: '/resources/teaching-ideas',
@@ -25,3 +27,6 @@ export type AppRoute = (typeof APP_ROUTES)[keyof typeof APP_ROUTES]
 
 /** Build a concrete category page path from its slug. */
 export const lessonCategoryPath = (slug: string) => `/lessons/category/${slug}`
+
+/** Build a concrete lesson detail path from its id/slug. */
+export const lessonPath = (slug: string) => `/lesson/${slug}`

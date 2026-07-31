@@ -96,12 +96,12 @@ export function Navbar() {
             ),
           )}
           <ResourcesMenu />
-          <a
-            href="#pricing"
+          <Link
+            to={APP_ROUTES.PRICING}
             className="uppercase tracking-wide transition hover:text-brand-600"
           >
             Pricing
-          </a>
+          </Link>
         </nav>
 
         {/* Auth actions */}

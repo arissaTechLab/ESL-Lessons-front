@@ -71,9 +71,17 @@ function LinkedInIcon() {
   )
 }
 
-export function TestimonialsSection() {
+export function TestimonialsSection({
+  variant = 'default',
+}: {
+  /** 'accent' shows the section on a green band (e.g. the pricing page). */
+  variant?: 'default' | 'accent'
+}) {
   return (
-    <section id="testimonials" className="scroll-mt-20">
+    <section
+      id="testimonials"
+      className={`scroll-mt-20 ${variant === 'accent' ? 'bg-accent-300' : ''}`}
+    >
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <h2 className="text-center font-heading text-3xl font-bold text-ink sm:text-4xl">
           What ESL Teachers and

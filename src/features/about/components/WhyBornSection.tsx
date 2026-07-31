@@ -9,7 +9,7 @@ const CHAPTERS: readonly Chapter[] = [
   {
     title: 'The Early Days: Improvised Lessons',
     description:
-      'Screenshots, news articles, last-minute warm-ups — I made it work. But it wasn’t structured, scalable, or professional.',
+      'At first, I was at a bit of a loss - screenshots, news articles, last-minute warm-ups - I could pull off very good online English lessons…for several weeks. But when I’d had a student for months, I got this creeping sense of dread: they weren’t getting my best work. There was no consistent review or structure. And trial lessons felt more like I was selling my personality than a beautifully crafted learning system. Because I hadn’t created a system. There was no crafting. I didn’t enter the online classroom with a sense of pride and excitement about the material I was about to present. I needed that calibre of material...but I just didn’t have the time to make it - I was so busy teaching, the most I could do was a 20 minute lesson prep scramble.',
   },
   {
     title: 'What Was Missing: A Real System',
@@ -27,23 +27,10 @@ export function WhyBornSection() {
   return (
     <section>
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
-        <div className="grid gap-8 lg:grid-cols-2 lg:items-start">
+        <div className="items-start">
           <h2 className="font-heading text-3xl font-bold leading-tight text-ink sm:text-4xl">
-            From Worksheets to Wow: Why These Lessons Were Born
+            From Worksheets to Wow
           </h2>
-          <div className="space-y-4 text-ink-soft">
-            <p>
-              When I started teaching ESL online, I expected a treasure trove of
-              rich, visual lessons — GIFs, videos, dynamic content. What I found
-              instead? Glorified worksheets. Fill in the blanks, a sad image at
-              the top, or a dull “correct/incorrect” pop-up.
-            </p>
-            <p>
-              It felt like someone had uploaded a 90s textbook. That’s not what
-              one-on-one learning needs — and definitely not what students
-              deserve.
-            </p>
-          </div>
         </div>
 
         <div className="mt-14 grid gap-8 md:grid-cols-3">
@@ -53,7 +40,9 @@ export function WhyBornSection() {
               <h3 className="mt-5 font-heading text-lg font-semibold text-ink">
                 {chapter.title}
               </h3>
-              <p className="mt-2 text-sm text-ink-soft">{chapter.description}</p>
+              <p className="mt-2 text-sm text-ink-soft">
+                {chapter.description}
+              </p>
             </article>
           ))}
         </div>

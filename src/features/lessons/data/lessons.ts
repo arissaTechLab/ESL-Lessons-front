@@ -145,3 +145,8 @@ export function formatLessonDate(iso: string): string {
   const [year, month, day] = iso.split('-')
   return `${day}/${month}/${year}`
 }
+
+/** Look up a lesson by its id. */
+export function getLessonById(id: string): Lesson | undefined {
+  return LESSONS.find((lesson) => lesson.id === id)
+}
