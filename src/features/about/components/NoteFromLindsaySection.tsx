@@ -1,5 +1,3 @@
-import { Placeholder } from '@/shared/components'
-
 export function NoteFromLindsaySection() {
   return (
     <section>
@@ -52,7 +50,13 @@ export function NoteFromLindsaySection() {
         </div>
 
         {/* Portrait — supplied later */}
-        <Placeholder label="Photo" className="aspect-[4/5] w-full" />
+        <div className="overflow-hidden rounded-2xl">
+          <img
+            src="/about-img.webp"
+            alt=""
+            className="h-full min-h-80 w-full object-cover"
+          />
+        </div>
       </div>
     </section>
   )

@@ -14,12 +14,12 @@ const CHAPTERS: readonly Chapter[] = [
   {
     title: 'What Was Missing: A Real System',
     description:
-      'Trial lessons felt like I was selling my personality, not a method. Students needed thoughtful, intentional learning — not guesswork.',
+      'Then, Covid really did a number on my lungs. Suddenly, I couldn’t teach for more than half an hour without getting lightheaded. This new restriction turned all of my focus towards creating the lessons I’d been wanting, but had never had the time to develop.One thing was clear: lessons needed to hit the sweet spot between the connected, satisfying conversation of a great speaking lesson, AND a system with structured review that lets students see their progress over the long term. Also, siliness. A liberal smattering of silliness was crucial.Through research, trial and error and ideas from some brilliant friends, I developed some key components: a scrolling system on Google Slides, GIF and image based vocab introduction, a walk & talk speaking review, and grammar focused on speaking in context.',
   },
   {
     title: 'The Solution: Smart, Visual, Human',
     description:
-      'I built what I wished existed: image-rich, real-world content, designed for actual conversations — not just grammar drills.',
+      '“Did you know that as you sleep, fluid gushes up from your spine and cleans out your brain??” My students and I were learning more than just English with the podcast-based lessons - they were a hit. Every day, I’d spend hours developing the lessons, then test and refine them by teaching for just one hour. Curating the perfect 15 minute podcast excerpts, making image-based speaking prompts - as my lungs slowly recovered, I realized I’d have to keep the same schedule so I could continue to focus all of my energy on creating these lesson materials. I hope you and your students enjoy these lessons as much as we do, and I welcome any feedback you’d like to pass along to help continually improve them. ',
   },
 ]
 

@@ -33,7 +33,7 @@ export function WhatMakesDifferentSection() {
             WHow are these lessons different?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-ink-soft">
-            Teaching 1-to-1 speaking lessons? These materials are made for you!
+            They’re designed for your one-on-one, speaking lessons.
           </p>
           <a
             href="#pricing"
