@@ -69,7 +69,7 @@ export function LessonCard({ lesson }: { lesson: Lesson }) {
         ) : (
           <span className="flex items-center gap-1 text-xs font-bold uppercase text-ink-soft">
             <LockIcon />
-            {lesson.credits} credit
+            Paid
           </span>
         )}
         {lesson.isSeries && (

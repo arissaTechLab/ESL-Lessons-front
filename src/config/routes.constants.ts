@@ -21,6 +21,15 @@ export const APP_ROUTES = {
   // Auth
   LOGIN: '/login',
   SIGNUP: '/signup',
+  // Admin
+  ADMIN: '/admin',
+  ADMIN_LESSONS: '/admin/lessons',
+  ADMIN_LESSON_NEW: '/admin/lessons/new',
+  ADMIN_LESSON_EDIT: '/admin/lessons/:id/edit',
+  ADMIN_BLOG: '/admin/blog',
+  ADMIN_BLOG_NEW: '/admin/blog/new',
+  ADMIN_BLOG_EDIT: '/admin/blog/:id/edit',
+  ADMIN_CLIENTS: '/admin/clients',
 } as const
 
 export type AppRoute = (typeof APP_ROUTES)[keyof typeof APP_ROUTES]
@@ -30,3 +39,9 @@ export const lessonCategoryPath = (slug: string) => `/lessons/category/${slug}`
 
 /** Build a concrete lesson detail path from its id/slug. */
 export const lessonPath = (slug: string) => `/lesson/${slug}`
+
+/** Build the admin edit path for a lesson. */
+export const adminLessonEditPath = (id: string) => `/admin/lessons/${id}/edit`
+
+/** Build the admin edit path for a blog post. */
+export const adminBlogEditPath = (id: string) => `/admin/blog/${id}/edit`

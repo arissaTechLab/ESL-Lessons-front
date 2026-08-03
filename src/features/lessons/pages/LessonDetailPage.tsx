@@ -25,8 +25,8 @@ const FALLBACK_LESSON: Lesson = {
   topic: 'Health',
   dateAdded: '2025-04-14',
   isFree: false,
-  credits: 1,
   isSeries: false,
+  status: 'published',
 }
 
 const OBJECTIVES: readonly string[] = [

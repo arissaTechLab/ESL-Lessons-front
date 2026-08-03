@@ -13,26 +13,26 @@ const OFFERS: readonly Offer[] = [
   {
     title: 'Story-Based Units',
     description:
-      'GIfs and imagery replace definitions to anchor new vocab and get students talking.',
+      'GIFs and images introduce vocab through speaking - not reading definitions.',
   },
   {
     title: 'Phrasal Verb Deep Dives',
-    description: '100% image-based prompts to keep the focus on speaking.',
+    description: 'Photos give context for speaking with confidence.',
   },
   {
     title: 'Visual Grammar',
     description:
-      'Open-ended prompts mean students speak with target grammar in context. Death to worksheets!',
+      'Death to worksheets! Illustrated role-plays get them speaking with target grammar.',
   },
   {
     title: 'Pronunciation',
     description:
-      'Those Minimal Pairs activites you´ve been meaning to make more comprehensive and aesthetic? Done!',
+      'Those minimal pairs you’ve been meaning to make...less thrown together? Done!',
   },
   {
-    title: 'The Complete Package',
+    title: 'The Whole Shebang',
     description:
-      'Every lesson includes spaced repetition for vocab retention, ready-to-use homeworkm and a step-by-step teacher´s guide.',
+      'very unit includes homework, all lessons are designed for spaced review, and each one comes with a step-by-step lesson plan.',
   },
 ]
 
@@ -54,7 +54,8 @@ export function WhatIOfferSection() {
             <p className="text-brand-500">Never. Prep. Again.</p>
           </h2>
           <p className="mt-4 text-ink-soft">
-            The structure & review your students want - no boring worksheets.
+            Keep the natural conversation. Add the structure and review your
+            students want.
           </p>
 
           <ul className="mt-8 space-y-4">

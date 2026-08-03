@@ -2,6 +2,8 @@
 
 /** CEFR levels — matched against each lesson's level tags. */
 export const CEFR_LEVELS = [
+  { value: 'A1', label: 'A1 (Beginner)' },
+  { value: 'A2', label: 'A2 (Elementary)' },
   { value: 'B1', label: 'B1 (Intermediate)' },
   { value: 'B2', label: 'B2 (Upper-Intermediate)' },
   { value: 'C1', label: 'C1 (Advanced)' },
@@ -26,3 +28,8 @@ export const TOPIC_FILTER_OPTIONS = [
   'Arts & Entertainment',
   'Business',
 ] as const
+
+/** Real topics (excludes the free-access pseudo-topic) — used in forms. */
+export const LESSON_TOPIC_OPTIONS = TOPIC_FILTER_OPTIONS.filter(
+  (topic) => topic !== FREE_LESSONS_TOPIC,
+)

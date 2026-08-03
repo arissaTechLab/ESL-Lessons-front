@@ -15,28 +15,39 @@ export interface LevelMeta {
  * card + badge updates automatically.
  */
 export const LEVEL_META: Record<LessonLevel, LevelMeta> = {
+  'beginner-elementary': {
+    label: 'Beginner & Elementary',
+    tags: ['A1', 'A2'],
+    bg: '#e9e0f6',
+    text: '#27170c',
+  },
   intermediate: {
     label: 'Intermediate',
     tags: ['B1'],
-    bg: '#e0f2fe',
-    text: '#0c4a6e',
-  },
-  'upper-intermediate-advanced': {
-    label: 'Upper-Intermediate & Advanced',
-    tags: ['B2', 'C1'],
-    bg: '#fef3c7',
-    text: '#78350f',
-  },
-  'multi-level': {
-    label: 'Multi-Level',
-    tags: ['B1', 'B2', 'C1'],
-    bg: '#ffe4e6',
-    text: '#881337',
+    bg: '#e1d5c9',
+    text: '#27170c',
   },
   'intermediate-upper-intermediate': {
     label: 'Intermediate & Upper-Intermediate',
     tags: ['B1', 'B2'],
-    bg: '#d1fae5',
-    text: '#064e3b',
+    bg: '#cce3e9',
+    text: '#27170c',
+  },
+  'upper-intermediate-advanced': {
+    label: 'Upper-Intermediate & Advanced',
+    tags: ['B2', 'C1'],
+    bg: '#ffeeb1',
+    text: '#27170c',
+  },
+  'multi-level': {
+    label: 'Multilevel',
+    tags: ['B1', 'B2', 'C1'],
+    bg: '#eac3c7',
+    text: '#27170c',
   },
 }
+
+/** Level options for forms (value + human label). */
+export const LESSON_LEVEL_OPTIONS = (
+  Object.keys(LEVEL_META) as LessonLevel[]
+).map((value) => ({ value, label: LEVEL_META[value].label }))

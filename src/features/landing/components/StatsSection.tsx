@@ -18,13 +18,13 @@ const STATS: readonly Stat[] = [
     ],
   },
   {
-    value: '12+',
-    label: 'hours spent creating each lesson unit',
+    value: '14+',
+    label: 'hours spent creating each lesson',
     // Pencil
     icon: ['M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3Z'],
   },
   {
-    value: '2-5',
+    value: '2-3',
     label: 'new lessons added to the library every month',
     // Books on a shelf (library)
     icon: ['M4 4v16', 'M8 8v12', 'M12 6v14', 'm16 6 4 14'],
@@ -40,7 +40,7 @@ export function StatsSection() {
             key={stat.label}
             className="flex flex-col items-center text-center"
           >
-            <span className="grid size-16 place-items-center rounded-full border-2 border-ink/20 text-ink">
+            <span className="grid size-16 place-items-center rounded-full border-2 border-brand-600 text-brand-600">
               <svg
                 viewBox="0 0 24 24"
                 className="size-7"

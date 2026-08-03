@@ -23,9 +23,9 @@ export function Hero() {
             with ZERO prep time
           </p>
           <p className="mt-5 text-base text-ink-soft">
-            Finally, ESL lesson materials for your 1-on-1 speaking lessons! Give
-            structure and review to your fun and fascinating conversation
-            lessons. Materials made with love, and big deep dive energy.
+            Finally, ESL materials for your 1-on-1 speaking lessons! Book more
+            new students, and hold onto them long term by adding structure and
+            review to your conversation lessons.
           </p>
           <a href="#offer" className={buttonVariants('primary', 'md', 'mt-8')}>
             Get free lessons

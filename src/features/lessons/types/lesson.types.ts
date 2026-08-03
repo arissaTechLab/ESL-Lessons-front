@@ -1,8 +1,11 @@
 export type LessonLevel =
+  | 'beginner-elementary'
   | 'intermediate'
+  | 'intermediate-upper-intermediate'
   | 'upper-intermediate-advanced'
   | 'multi-level'
-  | 'intermediate-upper-intermediate'
+
+export type LessonStatus = 'published' | 'draft'
 
 export interface Lesson {
   id: string
@@ -12,8 +15,10 @@ export interface Lesson {
   topic: string
   /** ISO date (YYYY-MM-DD) — used for display and sorting. */
   dateAdded: string
+  /** Free vs paid access (no credits). */
   isFree: boolean
-  credits: number
   /** Part of a multi-lesson series (shows the series icon). */
   isSeries: boolean
+  /** Publication state (admin). */
+  status: LessonStatus
 }

@@ -14,21 +14,24 @@ const TESTIMONIALS: readonly Testimonial[] = [
       'These lessons are a dream. The amount of time it would take me to create something like this with pages of visuals and current podcast content- it’s an absolute life saver.',
     name: 'Felisha Martin',
     role: 'ESL Teacher and Academic Coach',
-    linkedin: '#',
+    photo: '/Felisha.jpg',
+    linkedin: 'https://www.linkedin.com/in/felisha-martin-0311a930/',
   },
   {
     quote:
       'My speaking has improved so much with these lessons! Talking about all the GIFs and pictures makes it very natural and spontaneous. The walking review part is a great way to change the vibe.',
     name: 'Luis Cervera',
     role: 'English Language Learner',
-    linkedin: '#',
+    photo: '/Luis.jpg',
+    linkedin: 'https://www.linkedin.com/in/luis-cervera-gil-1042b873/',
   },
   {
     quote:
       'When I started teaching English online, I didn’t want to work for an online school, but I wasn’t sure how to structure my lessons. With these lessons, I can confidently charge professional rates.',
     name: 'Isaias Peraza',
     role: 'Science Instructor & Freelance ESL Tutor',
-    linkedin: '#',
+    photo: '/Isaias.png',
+    linkedin: 'https://www.linkedin.com/in/isaias-peraza-baeza-777b09371/',
   },
 ]
 
@@ -65,7 +68,12 @@ function Avatar({ photo, name }: { photo?: string; name: string }) {
 
 function LinkedInIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      className="size-4"
+      fill="currentColor"
+      aria-hidden="true"
+    >
       <path d="M6.9 8.4H3.6V21h3.3V8.4ZM5.2 3a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8ZM21 21h-3.3v-6.1c0-1.5-.5-2.5-1.8-2.5-1 0-1.6.7-1.8 1.3-.1.2-.1.6-.1.9V21H10.7s.1-11.4 0-12.6H14v1.8c.4-.7 1.2-1.7 3-1.7 2.2 0 3.9 1.4 3.9 4.5V21Z" />
     </svg>
   )

@@ -1,10 +1,11 @@
 import type { Lesson, LessonLevel } from '../types/lesson.types'
 
 const LEVEL_CYCLE: readonly LessonLevel[] = [
+  'beginner-elementary',
   'intermediate',
+  'intermediate-upper-intermediate',
   'upper-intermediate-advanced',
   'multi-level',
-  'intermediate-upper-intermediate',
 ]
 
 const TOPIC_CYCLE: readonly string[] = [
@@ -38,7 +39,7 @@ export function makePlaceholderLessons(
     topic: TOPIC_CYCLE[i % TOPIC_CYCLE.length] ?? 'Business',
     dateAdded: `2025-05-${String((i % 28) + 1).padStart(2, '0')}`,
     isFree: allFree || i % 3 === 0,
-    credits: 1,
     isSeries: i % 4 === 0,
+    status: 'published',
   }))
 }

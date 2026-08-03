@@ -30,20 +30,25 @@ export function WhatMakesDifferentSection() {
       <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
         <div className="text-center">
           <h2 className="font-heading text-3xl font-bold text-ink sm:text-4xl">
-            What Makes These Lessons Different
+            WHow are these lessons different?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-ink-soft">
-            These aren’t PDFs with fill-in-the-blanks. They’re full-on,
-            immersive digital experiences.
+            Teaching 1-to-1 speaking lessons? These materials are made for you!
           </p>
-          <a href="#pricing" className={buttonVariants('primary', 'md', 'mt-8')}>
+          <a
+            href="#pricing"
+            className={buttonVariants('primary', 'md', 'mt-8')}
+          >
             Get free lessons
           </a>
         </div>
 
         <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {DIFFERENTIATORS.map((item) => (
-            <div key={item.text} className="flex flex-col items-center text-center">
+            <div
+              key={item.text}
+              className="flex flex-col items-center text-center"
+            >
               <span className="grid size-16 place-items-center rounded-full border-2 border-brand-300 text-brand-500">
                 <svg
                   viewBox="0 0 24 24"

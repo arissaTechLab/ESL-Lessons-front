@@ -18,6 +18,15 @@ import {
 import { FaqPage } from '@/features/faq'
 import { PrivacyPolicyPage, TermsOfServicePage } from '@/features/legal'
 import { LoginPage, SignUpPage } from '@/features/auth'
+import {
+  AdminLayout,
+  AdminDashboardPage,
+  AdminLessonsPage,
+  AdminLessonFormPage,
+  AdminBlogPage,
+  AdminBlogFormPage,
+  AdminClientsPage,
+} from '@/features/admin'
 
 /**
  * Application router. Each feature plugs its pages in here through its
@@ -46,4 +55,19 @@ export const router = createBrowserRouter([
   // Auth pages render standalone (no navbar/footer).
   { path: APP_ROUTES.LOGIN, element: <LoginPage /> },
   { path: APP_ROUTES.SIGNUP, element: <SignUpPage /> },
+  // Admin area — its own shell (sidebar), separate from the public site.
+  {
+    path: APP_ROUTES.ADMIN,
+    element: <AdminLayout />,
+    children: [
+      { index: true, element: <AdminDashboardPage /> },
+      { path: 'lessons', element: <AdminLessonsPage /> },
+      { path: 'lessons/new', element: <AdminLessonFormPage /> },
+      { path: 'lessons/:id/edit', element: <AdminLessonFormPage /> },
+      { path: 'blog', element: <AdminBlogPage /> },
+      { path: 'blog/new', element: <AdminBlogFormPage /> },
+      { path: 'blog/:id/edit', element: <AdminBlogFormPage /> },
+      { path: 'clients', element: <AdminClientsPage /> },
+    ],
+  },
 ])

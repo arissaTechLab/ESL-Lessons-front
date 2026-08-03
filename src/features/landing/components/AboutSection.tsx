@@ -14,25 +14,29 @@ export function AboutSection() {
             From Creeping Dread to Polished, Thoughtful Lessons.
           </h2>
           <p className="mt-5 text-ink-soft">
-            If you’re reading this, perhaps you too are a fan of the deep
-            dive…curious to dig into the details. Here’s a bit about why I
-            created these lessons. Wait, actually, it’s the full, unabridged
-            saga of how and why I created these lessons. Welp, you’ve been
-            warned.
+            I wasn’t a novice when I started teaching English online; I had a
+            TESL/Linguistics degree and years of classroom experience. But my
+            arsenal of winning PDFs and ESL activities fell short in my online
+            classes. My students were happy — I was successfully winging it with
+            screenshots and some decent PDFs…but as they became long-term
+            regulars, I felt this creeping dread. I was letting them down with
+            mediocre materials.
           </p>
           <p className="mt-4 text-ink-soft">
-            When I started teaching ESL online, I scoured the internet for
-            ready-made ESL lesson materials full of images, GIFs, and authentic
-            sources. Earnestly embracing the digital age, I was certain I would
-            find this new generation of ESL lesson plans awaiting me online!
-            Instead, what I found was…in the words of one frustrated redditor:
-            “hot garbage.”
+            But I was so busy teaching, I just didn’t have the hours (or the
+            energy) it would take to develop entirely new materials for the
+            online, 1-on-1 speaking lesson. Then, long-COVID hit my lungs. I
+            couldn't breathe well enough to teach - but I could work silently.
+            So I finally built my dream system: image-rich Google Slides for
+            deep conversation and structured review. These days, I pour all my
+            energy into creating these materials, so you can just enjoy
+            teaching, and get paid for every hour you work.
           </p>
           <Link
             to={APP_ROUTES.ABOUT}
             className="mt-8 inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-wide text-brand-600 transition hover:text-brand-700"
           >
-            I must know the full story
+            I must know more
             <span aria-hidden="true">→</span>
           </Link>
         </div>
