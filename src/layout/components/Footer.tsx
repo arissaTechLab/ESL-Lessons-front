@@ -18,6 +18,7 @@ const FOOTER_COLUMNS: readonly {
       { label: 'Grammar Index', to: APP_ROUTES.GRAMMAR_INDEX },
       { label: 'Google Slides Tutorial', to: APP_ROUTES.GOOGLE_SLIDES },
       { label: 'Method & Teaching Ideas', to: APP_ROUTES.TEACHING_IDEAS },
+      { label: 'For Students', to: APP_ROUTES.FOR_STUDENTS },
       { label: 'About', to: APP_ROUTES.ABOUT },
     ],
   },

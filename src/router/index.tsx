@@ -11,6 +11,7 @@ import {
 } from '@/features/lessons'
 import { GrammarIndexPage } from '@/features/grammar'
 import { PricingPage } from '@/features/pricing'
+import { ForStudentsPage } from '@/features/for-students'
 import {
   GoogleSlidesTutorialPage,
   TeachingIdeasPage,
@@ -45,6 +46,7 @@ export const router = createBrowserRouter([
       { path: APP_ROUTES.LESSON_DETAIL, element: <LessonDetailPage /> },
       { path: APP_ROUTES.GRAMMAR_INDEX, element: <GrammarIndexPage /> },
       { path: APP_ROUTES.PRICING, element: <PricingPage /> },
+      { path: APP_ROUTES.FOR_STUDENTS, element: <ForStudentsPage /> },
       { path: APP_ROUTES.GOOGLE_SLIDES, element: <GoogleSlidesTutorialPage /> },
       { path: APP_ROUTES.TEACHING_IDEAS, element: <TeachingIdeasPage /> },
       { path: APP_ROUTES.FAQ, element: <FaqPage /> },

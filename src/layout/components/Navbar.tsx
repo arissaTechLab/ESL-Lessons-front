@@ -102,6 +102,12 @@ export function Navbar() {
           >
             Pricing
           </Link>
+          <Link
+            to={APP_ROUTES.FOR_STUDENTS}
+            className="uppercase tracking-wide transition hover:text-brand-600"
+          >
+            For Students
+          </Link>
         </nav>
 
         {/* Auth actions */}

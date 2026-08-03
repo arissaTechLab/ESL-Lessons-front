@@ -6,6 +6,7 @@ export const APP_ROUTES = {
   HOME: '/',
   ABOUT: '/about',
   ALL_LESSONS: '/lessons',
+  FOR_STUDENTS: '/for-students',
   FREE_LESSONS: '/lessons/free',
   LESSON_CATEGORY: '/lessons/category/:slug',
   LESSON_DETAIL: '/lesson/:slug',

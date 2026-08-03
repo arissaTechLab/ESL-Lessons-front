@@ -1,5 +1,6 @@
 import {
   Hero,
+  StudentNoticeSection,
   WhatIOfferSection,
   HowToUseSection,
   StatsSection,
@@ -10,12 +11,13 @@ import {
 
 /**
  * Public landing page. Composes the landing sections top-to-bottom:
- * hero → offer → how-to-use → stats → about → testimonials → CTA.
+ * hero → student notice → offer → how-to-use → stats → about → testimonials → CTA.
  */
 export function LandingPage() {
   return (
     <>
       <Hero />
+      <StudentNoticeSection />
       <WhatIOfferSection />
       <HowToUseSection />
       <StatsSection />

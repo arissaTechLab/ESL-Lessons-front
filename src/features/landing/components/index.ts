@@ -1,4 +1,5 @@
 export { Hero } from './Hero'
+export { StudentNoticeSection } from './StudentNoticeSection'
 export { WhatIOfferSection } from './WhatIOfferSection'
 export { HowToUseSection } from './HowToUseSection'
 export { StatsSection } from './StatsSection'
