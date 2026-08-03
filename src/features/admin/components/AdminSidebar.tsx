@@ -32,6 +32,13 @@ const ClientsIcon = () => (
   </>
 )
 
+const RevenueIcon = () => (
+  <>
+    <path d="m22 7-8.5 8.5-5-5L2 17" />
+    <path d="M16 7h6v6" />
+  </>
+)
+
 interface NavItem {
   to: string
   label: string
@@ -45,6 +52,7 @@ const NAV_ITEMS: readonly NavItem[] = [
   { to: APP_ROUTES.ADMIN_LESSONS, label: 'Lessons', Icon: LessonsIcon },
   { to: APP_ROUTES.ADMIN_BLOG, label: 'Blog', Icon: BlogIcon },
   { to: APP_ROUTES.ADMIN_CLIENTS, label: 'Clients', Icon: ClientsIcon },
+  { to: APP_ROUTES.ADMIN_REVENUE, label: 'Revenue', Icon: RevenueIcon },
 ]
 
 function NavIcon({ children }: { children: React.ReactNode }) {

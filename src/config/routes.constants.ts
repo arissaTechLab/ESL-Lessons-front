@@ -22,6 +22,7 @@ export const APP_ROUTES = {
   // Auth
   LOGIN: '/login',
   SIGNUP: '/signup',
+  FORGOT_PASSWORD: '/forgot-password',
   // Admin
   ADMIN: '/admin',
   ADMIN_LESSONS: '/admin/lessons',
@@ -31,6 +32,7 @@ export const APP_ROUTES = {
   ADMIN_BLOG_NEW: '/admin/blog/new',
   ADMIN_BLOG_EDIT: '/admin/blog/:id/edit',
   ADMIN_CLIENTS: '/admin/clients',
+  ADMIN_REVENUE: '/admin/revenue',
 } as const
 
 export type AppRoute = (typeof APP_ROUTES)[keyof typeof APP_ROUTES]

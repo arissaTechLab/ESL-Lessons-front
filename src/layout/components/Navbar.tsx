@@ -114,6 +114,8 @@ export function Navbar() {
         <div className="flex items-center gap-2">
           <Link
             to={APP_ROUTES.LOGIN}
+            target="_blank"
+            rel="noopener noreferrer"
             className={buttonVariants('tertiary', 'sm')}
           >
             Log in

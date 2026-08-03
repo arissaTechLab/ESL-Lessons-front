@@ -35,4 +35,9 @@ export const LESSON_CATEGORIES: readonly LessonCategory[] = [
     title: 'Pronunciations Lessons',
     subtitle: 'Sharpen the trickiest sounds with focused speaking practice.',
   },
+  {
+    id: 'situational-english',
+    title: 'Situational English',
+    subtitle: 'Real-world scenarios that prepare students for everyday situations.',
+  },
 ]

@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { SortDropdown } from '@/shared/components'
-import { AdminPageHeader } from '@/features/admin/components'
+import { AdminPageHeader, StatTile } from '@/features/admin/components'
 import {
   CLIENTS,
   planLabel,
@@ -44,15 +44,6 @@ function StatusBadge({ status }: { status: Client['status'] }) {
     >
       {STATUS_LABELS[status]}
     </span>
-  )
-}
-
-function StatTile({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="rounded-xl border border-ink/10 bg-white p-5">
-      <p className="text-sm text-ink-soft">{label}</p>
-      <p className="mt-1 font-heading text-2xl font-bold text-ink">{value}</p>
-    </div>
   )
 }
 

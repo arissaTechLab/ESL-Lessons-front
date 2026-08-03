@@ -18,7 +18,7 @@ import {
 } from '@/features/resources'
 import { FaqPage } from '@/features/faq'
 import { PrivacyPolicyPage, TermsOfServicePage } from '@/features/legal'
-import { LoginPage, SignUpPage } from '@/features/auth'
+import { LoginPage, SignUpPage, ForgotPasswordPage } from '@/features/auth'
 import {
   AdminLayout,
   AdminDashboardPage,
@@ -27,6 +27,7 @@ import {
   AdminBlogPage,
   AdminBlogFormPage,
   AdminClientsPage,
+  AdminRevenuePage,
 } from '@/features/admin'
 
 /**
@@ -57,6 +58,7 @@ export const router = createBrowserRouter([
   // Auth pages render standalone (no navbar/footer).
   { path: APP_ROUTES.LOGIN, element: <LoginPage /> },
   { path: APP_ROUTES.SIGNUP, element: <SignUpPage /> },
+  { path: APP_ROUTES.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
   // Admin area — its own shell (sidebar), separate from the public site.
   {
     path: APP_ROUTES.ADMIN,
@@ -70,6 +72,7 @@ export const router = createBrowserRouter([
       { path: 'blog/new', element: <AdminBlogFormPage /> },
       { path: 'blog/:id/edit', element: <AdminBlogFormPage /> },
       { path: 'clients', element: <AdminClientsPage /> },
+      { path: 'revenue', element: <AdminRevenuePage /> },
     ],
   },
 ])

@@ -12,8 +12,8 @@ export function AdminLayout() {
 
   return (
     <div className="flex min-h-dvh bg-cream">
-      {/* Desktop sidebar */}
-      <aside className="hidden w-64 shrink-0 border-r border-ink/10 bg-white md:block">
+      {/* Desktop sidebar — fixed to the viewport height, stays put on scroll */}
+      <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 self-start border-r border-ink/10 bg-white md:block">
         <AdminSidebar />
       </aside>
 

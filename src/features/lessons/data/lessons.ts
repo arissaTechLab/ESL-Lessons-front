@@ -138,6 +138,28 @@ export const LESSONS: readonly Lesson[] = [
     isSeries: false,
     status: 'published',
   },
+  {
+    id: 'ordering-food',
+    title: 'Ordering Food and Making Reservations',
+    level: 'beginner-elementary',
+    category: 'Situational English',
+    topic: 'Human Interest',
+    dateAdded: '2025-05-03',
+    isFree: true,
+    isSeries: false,
+    status: 'published',
+  },
+  {
+    id: 'job-interview',
+    title: 'Handling a Job Interview in English',
+    level: 'intermediate-upper-intermediate',
+    category: 'Situational English',
+    topic: 'Business',
+    dateAdded: '2025-04-27',
+    isFree: false,
+    isSeries: true,
+    status: 'published',
+  },
 ]
 
 /** Format an ISO date (YYYY-MM-DD) as DD/MM/YYYY for display. */

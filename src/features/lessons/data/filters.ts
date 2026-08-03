@@ -15,6 +15,7 @@ export const CATEGORY_FILTER_OPTIONS = [
   'Grammar Speaking Lessons',
   'Phrasal Verb Speaking Lessons',
   'Pronunciations Lessons',
+  'Situational English',
 ] as const
 
 /** Special topic option that filters by free access instead of a topic. */

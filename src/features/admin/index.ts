@@ -7,4 +7,5 @@ export {
   AdminBlogPage,
   AdminBlogFormPage,
   AdminClientsPage,
+  AdminRevenuePage,
 } from './pages'
