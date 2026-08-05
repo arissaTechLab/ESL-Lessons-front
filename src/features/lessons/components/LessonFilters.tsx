@@ -1,9 +1,6 @@
 import { MultiSelectDropdown, SortDropdown } from '@/shared/components'
-import {
-  CEFR_LEVELS,
-  CATEGORY_FILTER_OPTIONS,
-  TOPIC_FILTER_OPTIONS,
-} from '../data/filters'
+import { CEFR_LEVELS, FREE_LESSONS_TOPIC } from '../data/filters'
+import { useTaxonomyStore } from '../store/taxonomy.store'
 import { SeriesIcon } from './LessonCard'
 
 export interface LessonFiltersState {
@@ -34,6 +31,16 @@ export function LessonFilters({
   onClear,
   showCategoryFilter = true,
 }: LessonFiltersProps) {
+  // Category/topic options come from the managed taxonomy so newly added
+  // ones show up in the public filters too.
+  const categories = useTaxonomyStore((s) => s.categories)
+  const topics = useTaxonomyStore((s) => s.topics)
+  const categoryOptions = categories.map((c) => ({ value: c, label: c }))
+  const topicOptions = [FREE_LESSONS_TOPIC, ...topics].map((t) => ({
+    value: t,
+    label: t,
+  }))
+
   return (
     <div>
       {/* Search + series hint */}
@@ -78,14 +85,14 @@ export function LessonFilters({
         {showCategoryFilter && (
           <MultiSelectDropdown
             label="Lesson categories"
-            options={CATEGORY_FILTER_OPTIONS.map((c) => ({ value: c, label: c }))}
+            options={categoryOptions}
             selected={filters.categories}
             onApply={(values) => onChange({ categories: values })}
           />
         )}
         <MultiSelectDropdown
           label="Lesson topic"
-          options={TOPIC_FILTER_OPTIONS.map((t) => ({ value: t, label: t }))}
+          options={topicOptions}
           selected={filters.topics}
           onApply={(values) => onChange({ topics: values })}
         />

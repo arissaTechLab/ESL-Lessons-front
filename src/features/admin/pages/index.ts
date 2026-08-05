@@ -1,6 +1,7 @@
 export { AdminDashboardPage } from './AdminDashboardPage'
 export { AdminLessonsPage } from './AdminLessonsPage'
 export { AdminLessonFormPage } from './AdminLessonFormPage'
+export { AdminTaxonomyPage } from './AdminTaxonomyPage'
 export { AdminBlogPage } from './AdminBlogPage'
 export { AdminBlogFormPage } from './AdminBlogFormPage'
 export { AdminClientsPage } from './AdminClientsPage'

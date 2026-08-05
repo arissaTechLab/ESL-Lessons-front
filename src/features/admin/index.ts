@@ -4,6 +4,7 @@ export {
   AdminDashboardPage,
   AdminLessonsPage,
   AdminLessonFormPage,
+  AdminTaxonomyPage,
   AdminBlogPage,
   AdminBlogFormPage,
   AdminClientsPage,

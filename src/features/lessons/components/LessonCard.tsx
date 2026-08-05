@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { Placeholder, buttonVariants } from '@/shared/components'
 import { lessonPath } from '@/config/routes.constants'
@@ -55,7 +56,17 @@ export function SeriesIcon({ className = 'size-4' }: { className?: string }) {
  * height (access/series row, 2-line title, level strip, meta lines) so cards
  * never differ in height, whether or not a lesson has a series icon.
  */
-export function LessonCard({ lesson }: { lesson: Lesson }) {
+export function LessonCard({
+  lesson,
+  to,
+  footer,
+}: {
+  lesson: Lesson
+  /** Destination for the card's link (defaults to the public detail page). */
+  to?: string
+  /** Optional extra content rendered below the button (e.g. a folder picker). */
+  footer?: ReactNode
+}) {
   return (
     <article className="flex flex-col rounded-xl border border-ink/10 bg-cream p-3">
       {/* Access badge + series marker — fixed height so the series icon
@@ -107,11 +118,13 @@ export function LessonCard({ lesson }: { lesson: Lesson }) {
       </div>
 
       <Link
-        to={lessonPath(lesson.id)}
+        to={to ?? lessonPath(lesson.id)}
         className={buttonVariants('secondary', 'sm', 'mt-4 w-full')}
       >
         Go to lesson
       </Link>
+
+      {footer && <div className="mt-2">{footer}</div>}
     </article>
   )
 }

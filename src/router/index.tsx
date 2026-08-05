@@ -20,10 +20,17 @@ import { FaqPage } from '@/features/faq'
 import { PrivacyPolicyPage, TermsOfServicePage } from '@/features/legal'
 import { LoginPage, SignUpPage, ForgotPasswordPage } from '@/features/auth'
 import {
+  ClientLayout,
+  MaterialsPage,
+  ClientMaterialPage,
+  AccountPage,
+} from '@/features/client'
+import {
   AdminLayout,
   AdminDashboardPage,
   AdminLessonsPage,
   AdminLessonFormPage,
+  AdminTaxonomyPage,
   AdminBlogPage,
   AdminBlogFormPage,
   AdminClientsPage,
@@ -59,6 +66,16 @@ export const router = createBrowserRouter([
   { path: APP_ROUTES.LOGIN, element: <LoginPage /> },
   { path: APP_ROUTES.SIGNUP, element: <SignUpPage /> },
   { path: APP_ROUTES.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
+  // Client zone — its own shell (top bar), separate from the public site.
+  {
+    path: APP_ROUTES.CLIENT_MATERIALS,
+    element: <ClientLayout />,
+    children: [
+      { index: true, element: <MaterialsPage /> },
+      { path: 'materials/:slug', element: <ClientMaterialPage /> },
+      { path: 'account', element: <AccountPage /> },
+    ],
+  },
   // Admin area — its own shell (sidebar), separate from the public site.
   {
     path: APP_ROUTES.ADMIN,
@@ -68,6 +85,7 @@ export const router = createBrowserRouter([
       { path: 'lessons', element: <AdminLessonsPage /> },
       { path: 'lessons/new', element: <AdminLessonFormPage /> },
       { path: 'lessons/:id/edit', element: <AdminLessonFormPage /> },
+      { path: 'taxonomy', element: <AdminTaxonomyPage /> },
       { path: 'blog', element: <AdminBlogPage /> },
       { path: 'blog/new', element: <AdminBlogFormPage /> },
       { path: 'blog/:id/edit', element: <AdminBlogFormPage /> },

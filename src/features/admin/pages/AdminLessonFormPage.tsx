@@ -11,24 +11,24 @@ import {
   StatusField,
 } from '@/features/admin/components'
 import {
-  CATEGORY_FILTER_OPTIONS,
-  LESSON_LEVEL_OPTIONS,
-  LESSON_TOPIC_OPTIONS,
   getLessonById,
+  useTaxonomyStore,
   type LessonStatus,
 } from '@/features/lessons'
-
-const CATEGORY_OPTIONS = CATEGORY_FILTER_OPTIONS.map((c) => ({
-  value: c,
-  label: c,
-}))
-const TOPIC_OPTIONS = LESSON_TOPIC_OPTIONS.map((t) => ({ value: t, label: t }))
 
 export function AdminLessonFormPage() {
   const navigate = useNavigate()
   const { id } = useParams()
   const editing = id ? getLessonById(id) : undefined
   const isEdit = Boolean(id)
+
+  // Options come from the managed taxonomy (admin → Taxonomy).
+  const categories = useTaxonomyStore((s) => s.categories)
+  const topics = useTaxonomyStore((s) => s.topics)
+  const levels = useTaxonomyStore((s) => s.levels)
+  const categoryOptions = categories.map((c) => ({ value: c, label: c }))
+  const topicOptions = topics.map((t) => ({ value: t, label: t }))
+  const levelOptions = levels.map((l) => ({ value: l.id, label: l.label }))
 
   const [status, setStatus] = useState<LessonStatus>(
     editing?.status ?? 'draft',
@@ -90,7 +90,7 @@ export function AdminLessonFormPage() {
               label="Category"
               name="category"
               placeholder="Select category"
-              options={CATEGORY_OPTIONS}
+              options={categoryOptions}
               defaultValue={editing?.category ?? ''}
               required
             />
@@ -98,7 +98,7 @@ export function AdminLessonFormPage() {
               label="Level"
               name="level"
               placeholder="Select level"
-              options={LESSON_LEVEL_OPTIONS}
+              options={levelOptions}
               defaultValue={editing?.level ?? ''}
               required
             />
@@ -106,7 +106,7 @@ export function AdminLessonFormPage() {
               label="Topic"
               name="topic"
               placeholder="Select topic"
-              options={TOPIC_OPTIONS}
+              options={topicOptions}
               defaultValue={editing?.topic ?? ''}
               required
             />

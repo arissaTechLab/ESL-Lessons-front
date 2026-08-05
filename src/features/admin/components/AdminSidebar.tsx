@@ -17,6 +17,13 @@ const LessonsIcon = () => (
   </>
 )
 
+const TaxonomyIcon = () => (
+  <>
+    <path d="M7.5 3H4a1 1 0 0 0-1 1v3.5a2 2 0 0 0 .586 1.414l9.5 9.5a2 2 0 0 0 2.828 0l3.5-3.5a2 2 0 0 0 0-2.828l-9.5-9.5A2 2 0 0 0 7.5 3Z" />
+    <circle cx="7.5" cy="7.5" r="1.5" />
+  </>
+)
+
 const BlogIcon = () => (
   <>
     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
@@ -50,6 +57,7 @@ interface NavItem {
 const NAV_ITEMS: readonly NavItem[] = [
   { to: APP_ROUTES.ADMIN, label: 'Dashboard', Icon: DashboardIcon, end: true },
   { to: APP_ROUTES.ADMIN_LESSONS, label: 'Lessons', Icon: LessonsIcon },
+  { to: APP_ROUTES.ADMIN_TAXONOMY, label: 'Taxonomy', Icon: TaxonomyIcon },
   { to: APP_ROUTES.ADMIN_BLOG, label: 'Blog', Icon: BlogIcon },
   { to: APP_ROUTES.ADMIN_CLIENTS, label: 'Clients', Icon: ClientsIcon },
   { to: APP_ROUTES.ADMIN_REVENUE, label: 'Revenue', Icon: RevenueIcon },

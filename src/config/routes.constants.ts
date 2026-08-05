@@ -23,9 +23,14 @@ export const APP_ROUTES = {
   LOGIN: '/login',
   SIGNUP: '/signup',
   FORGOT_PASSWORD: '/forgot-password',
+  // Client zone (logged-in customer)
+  CLIENT_MATERIALS: '/app',
+  CLIENT_MATERIAL_DETAIL: '/app/materials/:slug',
+  CLIENT_ACCOUNT: '/app/account',
   // Admin
   ADMIN: '/admin',
   ADMIN_LESSONS: '/admin/lessons',
+  ADMIN_TAXONOMY: '/admin/taxonomy',
   ADMIN_LESSON_NEW: '/admin/lessons/new',
   ADMIN_LESSON_EDIT: '/admin/lessons/:id/edit',
   ADMIN_BLOG: '/admin/blog',
@@ -45,6 +50,9 @@ export const lessonPath = (slug: string) => `/lesson/${slug}`
 
 /** Build the admin edit path for a lesson. */
 export const adminLessonEditPath = (id: string) => `/admin/lessons/${id}/edit`
+
+/** Build the client-zone material detail path from a lesson id. */
+export const clientMaterialPath = (slug: string) => `/app/materials/${slug}`
 
 /** Build the admin edit path for a blog post. */
 export const adminBlogEditPath = (id: string) => `/admin/blog/${id}/edit`
