@@ -79,12 +79,26 @@ export function AllLessonsPage() {
     () => sortLessons([...LESSONS], 'recent').slice(0, 4),
     [],
   )
+  // No popularity metric yet — curated selection (mirrors the most-downloaded
+  // lessons on the admin dashboard). Swap the ids when real data lands.
+  const popularLessons = useMemo(() => {
+    const popularIds = [
+      'space-travel',
+      'sleep-science',
+      'remote-work',
+      'street-food',
+    ]
+    return popularIds
+      .map((id) => LESSONS.find((lesson) => lesson.id === id))
+      .filter((lesson): lesson is Lesson => Boolean(lesson))
+  }, [])
 
   return (
     <>
       <PageHeader
         title="Explore the lesson library"
-        subtitle="Handcrafted ESL speaking lessons designed with novelty and structure. Saving you hours of prep."
+        subtitle="1-on-1 ESL materials unlike anything else on the internet.
+Knock their socks off - without the prep time. "
       />
 
       <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
@@ -136,6 +150,11 @@ export function AllLessonsPage() {
           <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
             <SectionHeading title="Most Recent" />
             <LessonGrid lessons={recentLessons} />
+          </section>
+
+          <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
+            <SectionHeading title="Most Popular" />
+            <LessonGrid lessons={popularLessons} />
           </section>
 
           <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">

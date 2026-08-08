@@ -8,7 +8,12 @@ import { LessonLevelBadge } from './LessonLevelBadge'
 
 function StarIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="size-4" fill="currentColor" aria-hidden="true">
+    <svg
+      viewBox="0 0 24 24"
+      className="size-4"
+      fill="currentColor"
+      aria-hidden="true"
+    >
       <path d="M12 3l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.8 6.1 21l1.1-6.5L2.5 9.8l6.5-.9L12 3Z" />
     </svg>
   )
@@ -68,10 +73,10 @@ export function LessonCard({
   footer?: ReactNode
 }) {
   return (
-    <article className="flex flex-col rounded-xl border border-ink/10 bg-cream p-3">
+    <article className="flex flex-col rounded-xl border border-ink/10 bg-white p-3 shadow-xl">
       {/* Access badge + series marker — fixed height so the series icon
           (or its absence) never changes the card height. */}
-      <div className="mb-2 flex h-7 items-center justify-between">
+      <div className="mb-2 flex h-7 items-center justify-between ">
         {lesson.isFree ? (
           <span className="flex items-center gap-1 text-xs font-bold uppercase text-brand-600">
             <StarIcon />

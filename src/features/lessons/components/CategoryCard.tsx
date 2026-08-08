@@ -6,7 +6,7 @@ import type { LessonCategory } from '../data/categories'
 /** Category card for the "All lessons: categories" section. */
 export function CategoryCard({ category }: { category: LessonCategory }) {
   return (
-    <article className="overflow-hidden rounded-xl border border-ink/10 bg-cream">
+    <article className="overflow-hidden rounded-xl border border-ink/10 bg-white shadow-xl">
       <Placeholder
         label=""
         className="aspect-[16/7] w-full rounded-none border-0"

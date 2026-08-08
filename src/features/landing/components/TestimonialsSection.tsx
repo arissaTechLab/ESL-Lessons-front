@@ -68,12 +68,7 @@ function Avatar({ photo, name }: { photo?: string; name: string }) {
 
 function LinkedInIcon() {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      className="size-4"
-      fill="currentColor"
-      aria-hidden="true"
-    >
+    <svg viewBox="0 0 24 24" className="size-3.5" fill="currentColor" aria-hidden="true">
       <path d="M6.9 8.4H3.6V21h3.3V8.4ZM5.2 3a1.9 1.9 0 1 0 0 3.8 1.9 1.9 0 0 0 0-3.8ZM21 21h-3.3v-6.1c0-1.5-.5-2.5-1.8-2.5-1 0-1.6.7-1.8 1.3-.1.2-.1.6-.1.9V21H10.7s.1-11.4 0-12.6H14v1.8c.4-.7 1.2-1.7 3-1.7 2.2 0 3.9 1.4 3.9 4.5V21Z" />
     </svg>
   )
@@ -119,7 +114,7 @@ export function TestimonialsSection({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`${testimonial.name} on LinkedIn`}
-                    className="text-ink-soft transition hover:text-brand-600"
+                    className="grid size-6 place-items-center rounded-full bg-[#0A66C2] text-white transition hover:bg-[#004182]"
                   >
                     <LinkedInIcon />
                   </a>

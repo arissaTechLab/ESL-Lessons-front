@@ -24,7 +24,7 @@ export function Hero() {
           </p>
           <p className="mt-5 text-base text-ink-soft">
             Finally, ESL materials for your 1-on-1 speaking lessons! Book more
-            new students, and hold onto them long term by adding structure and
+            new students, and hold onto them even longer by adding structure and
             review to your conversation lessons.
           </p>
           <a href="#offer" className={buttonVariants('primary', 'md', 'mt-8')}>
