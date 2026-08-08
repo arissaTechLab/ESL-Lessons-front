@@ -64,7 +64,7 @@ export function LessonFilters({
             onChange={(event) => onChange({ search: event.target.value })}
             placeholder="Search grammar or lesson topic"
             aria-label="Search lessons"
-            className="w-full rounded-full border border-ink/15 bg-cream py-2 pl-9 pr-4 text-sm text-ink placeholder:text-ink-muted focus:border-brand-500 focus:outline-none"
+            className="w-full rounded-full border border-ink/15 bg-white py-2 pl-9 pr-4 text-sm text-ink placeholder:text-ink-muted focus:border-brand-500 focus:outline-none"
           />
         </div>
         <p className="flex items-center gap-2 text-xs text-ink-muted">

@@ -15,6 +15,9 @@ export function CategoryCard({ category }: { category: LessonCategory }) {
         <h3 className="font-heading text-sm font-bold uppercase tracking-wide text-ink">
           {category.title}
         </h3>
+        <p className="mt-1 font-heading text-sm font-semibold tracking-wide text-brand-600">
+          {category.levels}
+        </p>
         <Link
           to={lessonCategoryPath(category.id)}
           className={buttonVariants('secondary', 'md', 'mt-3 w-full')}
