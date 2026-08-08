@@ -152,11 +152,6 @@ Knock their socks off - without the prep time. "
             <LessonGrid lessons={recentLessons} />
           </section>
 
-          <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
-            <SectionHeading title="Most Popular" />
-            <LessonGrid lessons={popularLessons} />
-          </section>
-
           <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
             <SectionHeading title="All Lessons: Categories" />
             <div className="mt-6 grid gap-6 sm:grid-cols-2">
@@ -164,6 +159,11 @@ Knock their socks off - without the prep time. "
                 <CategoryCard key={category.id} category={category} />
               ))}
             </div>
+          </section>
+
+          <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
+            <SectionHeading title="Most Popular" />
+            <LessonGrid lessons={popularLessons} />
           </section>
         </>
       )}
