@@ -1,49 +1,72 @@
-import type { ReactNode } from 'react'
 import { PageHeader } from '@/shared/components'
 import { CtaSection } from '@/features/landing'
-
-const PLACEHOLDER_PARAGRAPHS: readonly string[] = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque sagittis orci ut diam condimentum, vel euismod erat placerat. In iaculis arcu eros, eget tempus orci facilisis id.',
-  'Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus. Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque sagittis orci ut diam condimentum, vel euismod erat placerat. In iaculis arcu eros, eget tempus orci facilisis id.',
-  'Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque sagittis orci ut diam condimentum, vel euismod erat placerat. In iaculis arcu eros, eget tempus orci facilisis id. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut et massa mi. Aliquam in hendrerit urna. Pellentesque sit amet sapien fringilla, mattis ligula consectetur, ultrices mauris. Maecenas vitae mattis tellus.',
-  'Nullam quis imperdiet augue. Vestibulum auctor ornare leo, non suscipit magna interdum eu. Curabitur pellentesque nibh nibh, at maximus ante fermentum sit amet. Pellentesque commodo lacus at sodales sodales. Quisque sagittis orci ut diam condimentum, vel euismod erat placerat. In iaculis arcu eros, eget tempus orci facilisis id.',
-]
+import type { LegalContent } from '../data/legal.types'
 
 interface LegalPageProps {
   title: string
-  subtitle?: string
-  /** Real content later; falls back to the text placeholder for now. */
-  children?: ReactNode
+  content: LegalContent
+}
+
+/**
+ * Renders one paragraph string. If it contains bullet markers (● or •), the
+ * text before the first marker becomes a lead paragraph and each marked item
+ * becomes its own list entry — so bullets stack vertically instead of running
+ * together. Plain paragraphs render as a single <p>.
+ */
+function LegalParagraph({ text }: { text: string }) {
+  const parts = text.split(/\s*[●•]\s*/)
+  const lead = parts[0]?.trim() ?? ''
+  const bullets = parts
+    .slice(1)
+    .map((item) => item.trim())
+    .filter(Boolean)
+
+  if (bullets.length === 0) {
+    return <p>{text.trim()}</p>
+  }
+
+  return (
+    <>
+      {lead && <p>{lead}</p>}
+      <ul className="list-disc space-y-2 pl-5 marker:text-brand-500">
+        {bullets.map((item, index) => (
+          <li key={index}>{item}</li>
+        ))}
+      </ul>
+    </>
+  )
 }
 
 /**
  * Shared layout for legal / text-heavy pages (Privacy Policy, Terms of
- * Service). Reuses the subpage `PageHeader` and the marketing CTA; the body
- * is a swappable text placeholder.
+ * Service). Reuses the subpage `PageHeader` and the marketing CTA. The actual
+ * text of each page lives in its own data file (see `../data`).
  */
-export function LegalPage({
-  title,
-  subtitle = 'Here goes the description',
-  children,
-}: LegalPageProps) {
+export function LegalPage({ title, content }: LegalPageProps) {
   return (
     <>
-      <PageHeader title={title} subtitle={subtitle} />
+      <PageHeader title={title} subtitle={content.subtitle} />
 
       <section>
         <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6">
-          {children ?? (
-            <>
-              <h2 className="font-heading text-sm font-bold uppercase tracking-wide text-ink">
-                Lindsay’s personalized text goes here
-              </h2>
-              <div className="mt-6 space-y-6 text-sm leading-relaxed text-ink-soft">
-                {PLACEHOLDER_PARAGRAPHS.map((paragraph) => (
-                  <p key={paragraph.slice(0, 24)}>{paragraph}</p>
-                ))}
+          <p className="text-xs uppercase tracking-wide text-ink-muted">
+            Last updated: {content.lastUpdated}
+          </p>
+
+          <div className="mt-8 space-y-10">
+            {content.sections.map((section) => (
+              <div key={section.heading}>
+                <h2 className="font-heading text-lg font-bold text-ink">
+                  {section.heading}
+                </h2>
+                <div className="mt-3 space-y-4 text-sm leading-relaxed text-ink-soft">
+                  {section.paragraphs.map((paragraph, index) => (
+                    <LegalParagraph key={index} text={paragraph} />
+                  ))}
+                </div>
               </div>
-            </>
-          )}
+            ))}
+          </div>
         </div>
       </section>
 

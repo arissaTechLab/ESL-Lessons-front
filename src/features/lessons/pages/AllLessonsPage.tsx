@@ -4,7 +4,7 @@ import { PageHeader } from '@/shared/components'
 import { APP_ROUTES } from '@/config/routes.constants'
 import { CtaSection } from '@/features/landing'
 import {
-  LessonCard,
+  LessonCardWide,
   CategoryCard,
   LessonFilters,
   type LessonFiltersState,
@@ -44,9 +44,9 @@ function SectionHeading({
 
 function LessonGrid({ lessons }: { lessons: readonly Lesson[] }) {
   return (
-    <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {lessons.map((lesson) => (
-        <LessonCard key={lesson.id} lesson={lesson} />
+        <LessonCardWide key={lesson.id} lesson={lesson} />
       ))}
     </div>
   )
@@ -72,22 +72,17 @@ export function AllLessonsPage() {
       sortLessons(
         LESSONS.filter((lesson) => lesson.isFree),
         'recent',
-      ).slice(0, 4),
+      ).slice(0, 3),
     [],
   )
   const recentLessons = useMemo(
-    () => sortLessons([...LESSONS], 'recent').slice(0, 4),
+    () => sortLessons([...LESSONS], 'recent').slice(0, 3),
     [],
   )
   // No popularity metric yet — curated selection (mirrors the most-downloaded
   // lessons on the admin dashboard). Swap the ids when real data lands.
   const popularLessons = useMemo(() => {
-    const popularIds = [
-      'space-travel',
-      'sleep-science',
-      'remote-work',
-      'street-food',
-    ]
+    const popularIds = ['space-travel', 'sleep-science', 'remote-work']
     return popularIds
       .map((id) => LESSONS.find((lesson) => lesson.id === id))
       .filter((lesson): lesson is Lesson => Boolean(lesson))
