@@ -98,7 +98,14 @@ export function LessonCard({
         )}
       </div>
 
-      <Placeholder label="" className="aspect-[4/3] w-full rounded-lg" />
+      {/* Thumbnail with the category highlighted over it (bottom-left, away
+          from the level strip below the title). */}
+      <div className="relative">
+        <Placeholder label="" className="aspect-[4/3] w-full rounded-lg" />
+        <span className="absolute bottom-2 left-2 max-w-[calc(100%-1rem)] truncate rounded-full bg-brand-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow-md">
+          {lesson.category}
+        </span>
+      </div>
 
       <h3 className="mt-3 line-clamp-2 min-h-[2.6em] font-heading text-sm font-bold uppercase leading-snug text-ink">
         {lesson.title}
@@ -109,10 +116,6 @@ export function LessonCard({
       </div>
 
       <div className="mt-3 space-y-0.5 text-xs text-ink-soft">
-        <p className="truncate">
-          <span className="font-semibold text-ink">Category:</span>{' '}
-          {lesson.category}
-        </p>
         <p className="truncate">
           <span className="font-semibold text-ink">Topic:</span> {lesson.topic}
         </p>
