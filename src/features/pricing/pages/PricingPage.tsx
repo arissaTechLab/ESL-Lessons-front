@@ -7,17 +7,17 @@ export function PricingPage() {
   return (
     <>
       <PageHeader
-        title="Choose Your Plan, Simplify Your Prep"
-        subtitle="Get instant access to ready-to-teach ESL conversation lessons designed to save you time and engage your students—every single class."
+        title="Choose Your Plan, Simplify Your Life"
+        subtitle="Get instant access to ready-to-teach ESL conversation lessons designed to save you time and delight your students - every single class."
       />
 
       {/* Intro */}
       <section className="mx-auto max-w-3xl px-4 pt-16 text-center sm:px-6">
         <p className="font-heading text-sm font-bold uppercase tracking-[0.2em] text-ink">
-          Everything you need. None of the prep.
+          All the materials. None of the prep.
         </p>
         <h2 className="mt-3 font-heading text-3xl font-bold text-ink sm:text-4xl">
-          Start Teaching Smarter
+          Just enjoy teaching and connecting
         </h2>
         <p className="mt-3 text-ink-soft">
           Choose the plan that fits your teaching routine.
@@ -30,6 +30,22 @@ export function PricingPage() {
           {PRICING_PLANS.map((plan) => (
             <PricingCard key={plan.id} plan={plan} />
           ))}
+        </div>
+
+        {/* Fine print */}
+        <div className="mx-auto mt-10 max-w-2xl border-t border-ink/10 pt-6 text-left">
+          <h3 className="font-heading text-sm font-bold uppercase tracking-wide text-ink">
+            Cancel anytime
+          </h3>
+          <p className="mt-2 text-xs leading-relaxed text-ink-muted">
+            <span className="font-semibold text-ink-soft">
+              A Note on Access:
+            </span>{' '}
+            Because the entire digital library is available for instant access
+            and is copiable, all sales are final and no refunds will be issued
+            for the initial 6-month or annual payment. You may cancel your
+            subscription at any time to prevent future billing.
+          </p>
         </div>
       </section>
 

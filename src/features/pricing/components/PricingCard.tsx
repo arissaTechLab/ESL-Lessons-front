@@ -59,7 +59,7 @@ function CheckIcon() {
 export function PricingCard({ plan }: { plan: PricingPlan }) {
   return (
     <div
-      className={`relative flex h-full flex-col rounded-2xl p-8 ${
+      className={`relative flex h-full flex-col rounded-2xl p-8 shadow-xl ${
         plan.featured ? 'bg-[#ece6d8]' : 'bg-accent-300'
       }`}
     >
@@ -88,7 +88,10 @@ export function PricingCard({ plan }: { plan: PricingPlan }) {
 
       <ul className="mt-6 space-y-3">
         {plan.features.map((feature) => (
-          <li key={feature} className="flex items-start gap-2 text-sm text-ink-soft">
+          <li
+            key={feature}
+            className="flex items-start gap-2 text-sm text-ink-soft"
+          >
             <CheckIcon />
             {feature}
           </li>

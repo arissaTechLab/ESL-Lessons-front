@@ -5,7 +5,7 @@ export interface Transaction {
   /** PayPal transaction reference (source of truth lives in PayPal). */
   paypalRef: string
   clientName: string
-  /** Plan label, e.g. "12-Month Plan". */
+  /** Plan label, e.g. "The Annual Pass". */
   plan: string
   /** Amount in USD. */
   amount: number

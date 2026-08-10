@@ -15,8 +15,8 @@ const TD = 'px-4 py-3 text-ink-soft'
 
 /** Rough monthly value of each plan (for MRR). */
 const PLAN_MONTHLY: Record<SubscriptionPlan, number> = {
-  '6-month': 59 / 6,
-  '12-month': 99 / 12,
+  '6-month': 72 / 6,
+  '12-month': 112 / 12,
 }
 
 const STATUS_STYLES: Record<Transaction['status'], string> = {

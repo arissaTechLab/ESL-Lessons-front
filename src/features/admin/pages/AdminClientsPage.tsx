@@ -13,8 +13,8 @@ const TD = 'px-4 py-3 text-ink-soft'
 
 const PLAN_FILTER_OPTIONS = [
   { value: 'all', label: 'All plans' },
-  { value: '6-month', label: '6-Month Plan' },
-  { value: '12-month', label: '12-Month Plan' },
+  { value: '6-month', label: 'The Semester Pass' },
+  { value: '12-month', label: 'The Annual Pass' },
   { value: 'none', label: 'No plan' },
 ] as const
 

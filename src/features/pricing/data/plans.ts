@@ -2,11 +2,9 @@ export interface PricingPlan {
   id: string
   name: string
   description: string
-  /** Placeholder price — change later. */
   price: string
   period: string
   billingNote: string
-  /** Placeholder advantages — change later. */
   features: readonly string[]
   ctaLabel: string
   /** Optional ribbon (e.g. "Best value"). */
@@ -15,40 +13,38 @@ export interface PricingPlan {
   featured?: boolean
 }
 
-/**
- * The two real subscription plans. Prices and advantages are placeholders for
- * now — swap them here and both cards update.
- */
+/** The two real subscription plans — edit prices and advantages here. */
 export const PRICING_PLANS: readonly PricingPlan[] = [
   {
     id: 'six-months',
-    name: '6-Month Plan',
-    description: 'Full access to the entire lesson library for six months.',
-    price: '$59',
-    period: '/ 6 months',
-    billingNote: 'Billed once as $59 for six months.',
+    name: 'The Semester Pass',
+    description: 'Full access for 6 months, then a simple monthly rate.',
+    price: '$72',
+    period: '/ first 6 months',
+    billingNote: 'Billed once as $72 for the first 6 months, then $12/month.',
     features: [
-      'Unlock every lesson in the library',
+      'Full access to the entire lesson library',
       '3–5 new lessons added every month',
-      'Google Slides & Teacher Guides included',
-      'Cancel anytime',
+      'Google Slides & teacher guides included',
+      'Auto-renews — cancel anytime in Account settings',
     ],
     ctaLabel: 'Subscribe now',
   },
   {
     id: 'one-year',
-    name: '12-Month Plan',
+    name: 'The Annual Pass',
     description: 'Best value — a full year of ready-to-teach lessons.',
-    price: '$99',
+    price: '$112',
     period: '/ year',
-    billingNote: 'Billed once as $99 for the year.',
+    billingNote:
+      'Billed once as $112 for the first year, then billed annually.',
     badge: 'Best value',
     featured: true,
     features: [
-      'Everything in the 6-Month Plan',
-      'Two extra months free vs. paying monthly',
-      'Priority access to new lesson series',
-      'Cancel anytime',
+      'Everything in the Semester Pass',
+      'Full access to the entire lesson library',
+      '3–5 new lessons added every month',
+      'Auto-renews yearly — cancel anytime in Account settings',
     ],
     ctaLabel: 'Subscribe now',
   },

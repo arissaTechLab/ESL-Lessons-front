@@ -4,7 +4,7 @@ export const CURRENT_USER = {
   lastName: 'Doe',
   email: 'jane.doe@example.com',
   memberSince: '2025-02-27',
-  plan: '12-Month Plan',
+  plan: 'The Annual Pass',
   planStatus: 'active' as 'active' | 'expired',
   renewsAt: '2026-02-27',
 }

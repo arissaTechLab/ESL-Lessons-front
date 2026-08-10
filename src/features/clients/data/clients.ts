@@ -88,8 +88,8 @@ export const CLIENTS: readonly Client[] = [
 ]
 
 const PLAN_LABELS: Record<SubscriptionPlan, string> = {
-  '6-month': '6-Month Plan',
-  '12-month': '12-Month Plan',
+  '6-month': 'The Semester Pass',
+  '12-month': 'The Annual Pass',
 }
 
 export function planLabel(plan: SubscriptionPlan | null): string {
