@@ -15,6 +15,10 @@ export const APP_ROUTES = {
   // Auth
   LOGIN: '/login',
   SIGNUP: '/signup',
+  FORGOT_PASSWORD: '/forgot-password',
+  // Private zones — the login response's `role` decides which one you land on.
+  APP: '/app',
+  ADMIN: '/admin',
 } as const
 
 export type AppRoute = (typeof APP_ROUTES)[keyof typeof APP_ROUTES]

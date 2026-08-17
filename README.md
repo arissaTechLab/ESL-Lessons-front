@@ -24,9 +24,13 @@ React 19, TypeScript, and Tailwind CSS v4, organized with
 git clone <repo-url>
 cd ESL-Lessons-front
 npm install
-cp .env.example .env   # optional — adjust VITE_ variables
+cp .env.example .env   # point VITE_API_URL at the backend
 npm run dev            # http://localhost:5173
 ```
+
+> **The app needs the API running.** Start `ESL-Lessons-back`
+> (`npm run start:dev`, http://localhost:3000/api) and seed it once with
+> `npm run seed` — otherwise every section renders its empty state.
 
 ## 📜 Scripts
 
@@ -46,12 +50,18 @@ npm run dev            # http://localhost:5173
 src/
 ├── config/       # App constants (routes)
 ├── router/       # React Router configuration
-├── store/        # Zustand global stores
+├── store/        # Zustand global stores (theme, auth)
+├── service/      # 🌐 API layer (http client, errors, token storage)
+├── interface/    # Transport-level shared types
+├── hooks/        # Global hooks (useAsync)
 ├── shared/       # Reusable, business-agnostic components
 ├── layout/       # App shell (Navbar, Footer, RootLayout)
 └── features/     # Business domains — the heart of the app
     ├── landing/  # 🏠 Landing page
-    └── lessons/  # 📚 Lessons
+    ├── lessons/  # 📚 Lessons
+    ├── auth/     # 🔐 Log in / sign up / forgot password
+    ├── dashboard/# 🚪 Private zones (/app, /admin)
+    └── …         # resources, faq, about, legal
 ```
 
 The architecture is **feature-first**: the folder tree tells you what the app
@@ -70,6 +80,20 @@ contributing.
 
 Only variables prefixed with `VITE_` are exposed to the client. See
 `.env.example`. **Never commit real secrets** — `.env` is git-ignored.
+
+| Variable       | Purpose                                              |
+| -------------- | ---------------------------------------------------- |
+| `VITE_API_URL` | Backend base URL, including `/api`. Read only by `src/service/http.client.ts`. |
+
+## 🌐 Data flow
+
+Components never call `fetch`. They call a **feature service**
+(`features/<domain>/services/*.service.ts`), which calls the shared `http`
+client. The client attaches the bearer token, normalises failures into
+`ApiError`, and silently refreshes an expired access token once before retrying.
+
+In components, `useAsync(loader, deps)` drives `<AsyncSection>`, which renders
+loading / error / empty / ready states the same way everywhere.
 
 ## 📦 Production build
 

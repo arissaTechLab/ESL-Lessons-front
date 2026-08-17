@@ -9,7 +9,13 @@ import {
 } from '@/features/resources'
 import { FaqPage } from '@/features/faq'
 import { PrivacyPolicyPage, TermsOfServicePage } from '@/features/legal'
-import { LoginPage, SignUpPage } from '@/features/auth'
+import {
+  ForgotPasswordPage,
+  LoginPage,
+  ProtectedRoute,
+  SignUpPage,
+} from '@/features/auth'
+import { AdminHomePage, ClientHomePage } from '@/features/dashboard'
 
 /**
  * Application router. Each feature plugs its pages in here through its
@@ -32,4 +38,23 @@ export const router = createBrowserRouter([
   // Auth pages render standalone (no navbar/footer).
   { path: APP_ROUTES.LOGIN, element: <LoginPage /> },
   { path: APP_ROUTES.SIGNUP, element: <SignUpPage /> },
+  { path: APP_ROUTES.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
+
+  // Private zones — guarded by role, each with its own chrome.
+  {
+    path: APP_ROUTES.APP,
+    element: (
+      <ProtectedRoute>
+        <ClientHomePage />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: APP_ROUTES.ADMIN,
+    element: (
+      <ProtectedRoute allow={['admin']}>
+        <AdminHomePage />
+      </ProtectedRoute>
+    ),
+  },
 ])

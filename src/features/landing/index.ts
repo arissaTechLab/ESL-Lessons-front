@@ -2,3 +2,5 @@
 export { LandingPage } from './pages'
 // Shared marketing CTA — reused by other public pages (e.g. `about`).
 export { CtaSection } from './components'
+export { contentService } from './services/content.service'
+export type { Stat, Testimonial } from './types/content.types'

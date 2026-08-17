@@ -1,56 +1,87 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
+import { AsyncSection } from '@/shared/components'
+import { useAsync } from '@/hooks'
 import { LessonCard } from '@/features/lessons/components/LessonCard'
-import { LESSONS } from '@/features/lessons/data/lessons'
-import type { Lesson } from '@/features/lessons/types/lesson.types'
+import { lessonsService } from '@/features/lessons/services/lessons.service'
+import type { LessonCard as Lesson } from '@/features/lessons/types/lesson.types'
 
-export function LessonsSection() {
-  const [startedIds, setStartedIds] = useState<ReadonlySet<string>>(new Set())
+interface LessonsSectionProps {
+  /** Section heading. */
+  title?: string
+  subtitle?: string
+  /** How many lessons to pull. */
+  limit?: number
+  /** Restrict to free samples — used by the "Free Lessons" block. */
+  freeOnly?: boolean
+}
 
-  const handleStart = (lesson: Lesson) => {
-    setStartedIds((prev) => {
-      const next = new Set(prev)
-      next.add(lesson.id)
-      return next
-    })
-  }
+/**
+ * Grid of lessons pulled live from the API. Every tile is the shared
+ * {@link LessonCard}, so the public library, category pages and the client's
+ * Materials screen all stay visually identical.
+ */
+export function LessonsSection({
+  title = 'Browse lessons',
+  subtitle = 'Ready-to-teach conversation lessons — filter by level, category or topic.',
+  limit = 8,
+  freeOnly = false,
+}: LessonsSectionProps) {
+  const [search, setSearch] = useState('')
 
-  const progress = useMemo(
-    () => Math.round((startedIds.size / LESSONS.length) * 100),
-    [startedIds],
+  const state = useAsync(
+    (signal) =>
+      lessonsService.list(
+        { limit, q: search || undefined, access: freeOnly ? 'free' : undefined },
+        signal,
+      ),
+    [limit, search, freeOnly],
   )
 
   return (
     <section id="lessons" className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
-            Browse lessons
+          <h2 className="font-heading text-2xl font-bold text-ink sm:text-3xl">
+            {title}
           </h2>
-          <p className="mt-2 text-slate-600 dark:text-slate-400">
-            Pick a level and start practicing. Your progress updates live.
-          </p>
+          <p className="mt-2 text-sm text-ink-soft">{subtitle}</p>
         </div>
 
-        <div className="min-w-52">
-          <div className="flex items-center justify-between text-sm font-medium text-slate-600 dark:text-slate-300">
-            <span>Started</span>
-            <span>
-              {startedIds.size}/{LESSONS.length}
-            </span>
-          </div>
-          <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
-            <div
-              className="h-full rounded-full bg-brand-600 transition-all duration-500"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-        </div>
+        <label className="min-w-64">
+          <span className="sr-only">Search lessons</span>
+          <input
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search lessons…"
+            className="w-full rounded-lg border border-ink/15 bg-white px-4 py-2.5 text-sm text-ink transition placeholder:text-ink-muted focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          />
+        </label>
       </div>
 
-      <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {LESSONS.map((lesson) => (
-          <LessonCard key={lesson.id} lesson={lesson} onStart={handleStart} />
-        ))}
+      <div className="mt-10">
+        <AsyncSection
+          state={state}
+          isEmpty={(page) => page.items.length === 0}
+          empty={
+            <p className="py-10 text-center text-sm text-ink-muted">
+              No lessons match your search yet.
+            </p>
+          }
+        >
+          {(page) => (
+            <>
+              <p className="mb-4 text-sm text-ink-muted">
+                {page.total} {page.total === 1 ? 'lesson' : 'lessons'}
+              </p>
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {page.items.map((lesson: Lesson) => (
+                  <LessonCard key={lesson.id} lesson={lesson} />
+                ))}
+              </div>
+            </>
+          )}
+        </AsyncSection>
       </div>
     </section>
   )

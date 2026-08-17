@@ -1,11 +1,19 @@
-/**
- * A blog-style resource article. Content will be managed by the admin later;
- * for now these power the mocked card grids.
- */
+/** The two article grids on the "How to & Teaching Ideas" page. */
+export type ArticleSection = 'how-to' | 'teaching-ideas'
+
+/** A blog-style article, managed from the admin panel's Blog section. */
 export interface Article {
   id: string
-  category: string
+  slug: string
   title: string
-  author: string
-  date: string
+  excerpt: string
+  imageUrl: string | null
+  authorName: string
+  category: string
+  section: ArticleSection
+  publishedAt: string | null
+}
+
+export interface ArticleDetail extends Article {
+  content: string
 }
