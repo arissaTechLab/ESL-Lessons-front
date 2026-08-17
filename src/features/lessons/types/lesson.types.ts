@@ -74,3 +74,34 @@ export interface CuratedLessons {
   mostRecent: LessonCard[]
   categories: { id: string; name: string; slug: string; lessonCount: number }[]
 }
+
+/** `GET /taxonomy` — every filter source in one call. */
+export interface Taxonomy {
+  categories: TaxonomyRef[]
+  levels: LevelRef[]
+  topics: TaxonomyRef[]
+}
+
+/** A visitor comment under a lesson. */
+export interface LessonComment {
+  id: string
+  body: string
+  createdAt: string
+  author: {
+    id: string
+    fullName: string
+    initials: string
+  }
+}
+
+/** Controlled state of the catalogue filter bar, mirrored in the URL. */
+export interface CatalogueFilterState {
+  q: string
+  /** CEFR codes (A1..C1) — the API accepts them for `levels`. */
+  levels: string[]
+  /** Category slugs. */
+  categories: string[]
+  /** Topic slugs. */
+  topics: string[]
+  sort: LessonSort
+}
