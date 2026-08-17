@@ -3,8 +3,10 @@ import { buttonVariants } from '@/shared/components'
 import { APP_ROUTES } from '@/config/routes.constants'
 
 const NAV_LINKS = [
-  { label: 'All Lessons', href: '#lessons' },
-  { label: 'Grammar Index', href: '#grammar' },
+  { label: 'All Lessons', to: APP_ROUTES.LESSONS },
+  { label: 'Grammar Index', to: APP_ROUTES.GRAMMAR_INDEX },
+  { label: 'Pricing', to: APP_ROUTES.PRICING },
+  { label: 'For Students', to: APP_ROUTES.FOR_STUDENTS },
 ] as const
 
 const RESOURCE_LINKS = [
@@ -90,22 +92,25 @@ export function Navbar() {
 
         {/* Center nav */}
         <nav className="hidden items-center gap-7 text-sm font-medium text-ink-soft md:flex">
-          {NAV_LINKS.map((link) => (
-            <a
+          {NAV_LINKS.slice(0, 2).map((link) => (
+            <Link
               key={link.label}
-              href={link.href}
+              to={link.to}
               className="uppercase tracking-wide transition hover:text-brand-600"
             >
               {link.label}
-            </a>
+            </Link>
           ))}
           <ResourcesMenu />
-          <a
-            href="#pricing"
-            className="uppercase tracking-wide transition hover:text-brand-600"
-          >
-            Pricing
-          </a>
+          {NAV_LINKS.slice(2).map((link) => (
+            <Link
+              key={link.label}
+              to={link.to}
+              className="uppercase tracking-wide transition hover:text-brand-600"
+            >
+              {link.label}
+            </Link>
+          ))}
         </nav>
 
         {/* Auth actions */}

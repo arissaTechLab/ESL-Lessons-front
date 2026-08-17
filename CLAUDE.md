@@ -8,15 +8,19 @@ Frontend for the **ESL Lessons** platform — a web app to browse and take
 English-as-a-Second-Language lessons.
 
 **The UI is wired to the real backend** (`ESL-Lessons-back`, NestJS + MongoDB).
-Lessons, FAQs, blog articles, testimonials and stats are fetched from the API;
-log in / sign up hit the real auth endpoints and route by role. Nothing on
-screen is hardcoded fixture data any more.
+Nothing on screen is hardcoded fixture data — the catalogue, taxonomy, blog,
+FAQs, testimonials, stats, pricing and every private screen read from the API.
 
-Still to build (specified in the functional guide, backend endpoints already
-exist): the full client Materials screen with tabs, search and folder chips,
-lesson detail pages, and the complete admin panel (Lessons, Taxonomy, Blog,
-Clients, Revenue). `/app` and `/admin` currently render minimal real-data
-placeholders behind the role guard.
+The three zones of the functional guide are all implemented:
+
+| Zone         | Routes                                             |
+| ------------ | -------------------------------------------------- |
+| Public web   | `/`, `/lessons`, `/categories/:slug`, `/free-lessons`, `/lessons/:slug`, `/grammar-index`, `/pricing`, `/for-students`, `/about`, `/faq`, resources, legal |
+| Client zone  | `/app` (Materials), `/app/materials/:slug`, `/app/account` |
+| Admin panel  | `/admin` (Dashboard), `/admin/lessons`, `/admin/taxonomy`, `/admin/blog`, `/admin/clients`, `/admin/revenue` |
+
+Login routes by role: `admin` → `/admin`, `client` → `/app`. Both zones sit
+behind `ProtectedRoute`.
 
 ## ⚠️ Architecture: read this first
 
@@ -76,19 +80,37 @@ src/
 ├── service/        # 🌐 Global API layer: http client, ApiError, token storage
 ├── interface/      # Transport-level types shared by every endpoint (Paginated…)
 ├── hooks/          # Global hooks (useAsync)
-├── shared/         # Reusable, business-agnostic components (ThemeToggle, AsyncSection)
-├── layout/         # App shell: RootLayout, Navbar, Footer
+├── shared/         # Reusable, business-agnostic UI (AsyncSection, Modal, MultiSelect…)
+├── layout/         # Three shells: RootLayout (public), AppLayout (client), AdminLayout
 └── features/
-    ├── landing/    # 🏠 Landing page + editable marketing content
-    ├── lessons/    # 📚 Lesson catalogue (LessonCard, LessonsSection, service, types)
-    ├── auth/       # 🔐 Log in / sign up / forgot password + ProtectedRoute
-    ├── dashboard/  # 🚪 The two private zones (/app, /admin)
-    ├── resources/  # 📰 Blog-style article pages
-    ├── faq/, about/, legal/
+    ├── landing/          # 🏠 Landing + editable marketing content
+    ├── lessons/          # 📚 Public catalogue, filters, lesson detail, comments
+    ├── grammar/          # 🔤 Grammar Index
+    ├── pricing/          # 💲 Plans
+    ├── students/         # 🎓 For Students
+    ├── auth/             # 🔐 Log in / sign up / forgot password + ProtectedRoute
+    ├── materials/        # 📂 Client zone: Materials + folders
+    ├── account/          # ⚙️  Client account & subscription
+    ├── admin-dashboard/  # 📊 Admin: metrics and charts
+    ├── admin-lessons/    # ✏️  Admin: lessons table + form
+    ├── admin-taxonomy/   # 🏷️  Admin: categories, levels, topics
+    ├── admin-blog/       # 📰 Admin: articles
+    ├── admin-clients/    # 👥 Admin: client directory
+    ├── admin-revenue/    # 💰 Admin: PayPal, revenue, transactions
+    └── resources/, faq/, about/, legal/
 ```
 
 Each feature owns its `services/` (API calls) and `types/` (domain types) and
-exposes them through its `index.ts` barrel.
+exposes them through its `index.ts` barrel. **Import features only through that
+barrel.**
+
+Two cross-feature contracts worth knowing:
+
+- `@/features/lessons` exports `LessonCard` (the tile every list reuses) and
+  `LessonCardModel` (its type). Materials wraps it rather than re-implementing it.
+- `@/features/admin-taxonomy` exports `taxonomyService`; the admin lesson form
+  populates its category/level/topic selects from it, never from a constant —
+  the guide is explicit that Taxonomy feeds that form.
 
 ## Talking to the API
 

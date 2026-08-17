@@ -14,10 +14,11 @@ const FOOTER_COLUMNS: readonly {
   {
     heading: 'Explore',
     links: [
-      { label: 'All Lessons' },
-      { label: 'Grammar Index' },
+      { label: 'All Lessons', to: APP_ROUTES.LESSONS },
+      { label: 'Grammar Index', to: APP_ROUTES.GRAMMAR_INDEX },
       { label: 'Google Slides Tutorial', to: APP_ROUTES.GOOGLE_SLIDES },
       { label: 'Method & Teaching Ideas', to: APP_ROUTES.TEACHING_IDEAS },
+      { label: 'For Students', to: APP_ROUTES.FOR_STUDENTS },
       { label: 'About', to: APP_ROUTES.ABOUT },
     ],
   },

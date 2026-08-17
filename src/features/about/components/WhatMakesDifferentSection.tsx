@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { APP_ROUTES } from '@/config/routes.constants'
 import { buttonVariants } from '@/shared/components'
 
 interface Differentiator {
@@ -36,9 +38,9 @@ export function WhatMakesDifferentSection() {
             These aren’t PDFs with fill-in-the-blanks. They’re full-on,
             immersive digital experiences.
           </p>
-          <a href="#pricing" className={buttonVariants('primary', 'md', 'mt-8')}>
+          <Link to={APP_ROUTES.PRICING} className={buttonVariants('primary', 'md', 'mt-8')}>
             Get free lessons
-          </a>
+          </Link>
         </div>
 
         <div className="mt-14 grid gap-10 sm:grid-cols-2 lg:grid-cols-4">

@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { APP_ROUTES } from '@/config/routes.constants'
 import { buttonVariants } from '@/shared/components'
 
 export function Hero() {
@@ -27,9 +29,9 @@ export function Hero() {
             advanced adult students. Visual grammar, podcast, and story-based
             lessons. Phrasal verb deep dives.
           </p>
-          <a href="#offer" className={buttonVariants('primary', 'md', 'mt-8')}>
+          <Link to={APP_ROUTES.FREE_LESSONS} className={buttonVariants('primary', 'md', 'mt-8')}>
             Get free lessons
-          </a>
+          </Link>
         </div>
       </div>
     </section>

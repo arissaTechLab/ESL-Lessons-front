@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom'
+import { APP_ROUTES } from '@/config/routes.constants'
 import { Placeholder, buttonVariants } from '@/shared/components'
 
 interface Offer {
@@ -84,9 +86,9 @@ export function WhatIOfferSection() {
             ))}
           </ul>
 
-          <a href="#pricing" className={buttonVariants('primary', 'md', 'mt-8')}>
+          <Link to={APP_ROUTES.FREE_LESSONS} className={buttonVariants('primary', 'md', 'mt-8')}>
             Get free lessons
-          </a>
+          </Link>
         </div>
       </div>
     </section>
