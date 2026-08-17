@@ -1,8 +1,17 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { RootLayout } from '@/layout'
+import { AdminLayout, AppLayout, RootLayout } from '@/layout'
 import { APP_ROUTES } from '@/config/routes.constants'
 import { LandingPage } from '@/features/landing'
 import { AboutPage } from '@/features/about'
+import {
+  AllLessonsPage,
+  CategoryPage,
+  FreeLessonsPage,
+  LessonDetailPage,
+} from '@/features/lessons'
+import { GrammarIndexPage } from '@/features/grammar'
+import { PricingPage } from '@/features/pricing'
+import { ForStudentsPage } from '@/features/students'
 import {
   GoogleSlidesTutorialPage,
   TeachingIdeasPage,
@@ -15,11 +24,21 @@ import {
   ProtectedRoute,
   SignUpPage,
 } from '@/features/auth'
-import { AdminHomePage, ClientHomePage } from '@/features/dashboard'
+import { MaterialDetailPage, MaterialsPage } from '@/features/materials'
+import { AccountPage } from '@/features/account'
+import { AdminDashboardPage } from '@/features/admin-dashboard'
+import { AdminLessonFormPage, AdminLessonsPage } from '@/features/admin-lessons'
+import { TaxonomyPage } from '@/features/admin-taxonomy'
+import { AdminBlogFormPage, AdminBlogPage } from '@/features/admin-blog'
+import { AdminClientsPage } from '@/features/admin-clients'
+import { AdminRevenuePage } from '@/features/admin-revenue'
 
 /**
  * Application router. Each feature plugs its pages in here through its
  * public API. Add new routes alongside `APP_ROUTES` in config first.
+ *
+ * Three shells: RootLayout (public), AppLayout (client) and AdminLayout, the
+ * last two behind `ProtectedRoute` so an anonymous visitor never reaches them.
  */
 export const router = createBrowserRouter([
   {
@@ -28,33 +47,61 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <LandingPage /> },
       { path: APP_ROUTES.ABOUT, element: <AboutPage /> },
+      // Catalogue
+      { path: APP_ROUTES.LESSONS, element: <AllLessonsPage /> },
+      { path: APP_ROUTES.LESSON_DETAIL, element: <LessonDetailPage /> },
+      { path: APP_ROUTES.CATEGORY, element: <CategoryPage /> },
+      { path: APP_ROUTES.FREE_LESSONS, element: <FreeLessonsPage /> },
+      { path: APP_ROUTES.GRAMMAR_INDEX, element: <GrammarIndexPage /> },
+      { path: APP_ROUTES.PRICING, element: <PricingPage /> },
+      { path: APP_ROUTES.FOR_STUDENTS, element: <ForStudentsPage /> },
+      // Resources
       { path: APP_ROUTES.GOOGLE_SLIDES, element: <GoogleSlidesTutorialPage /> },
       { path: APP_ROUTES.TEACHING_IDEAS, element: <TeachingIdeasPage /> },
+      // Support / legal
       { path: APP_ROUTES.FAQ, element: <FaqPage /> },
       { path: APP_ROUTES.PRIVACY_POLICY, element: <PrivacyPolicyPage /> },
       { path: APP_ROUTES.TERMS_OF_SERVICE, element: <TermsOfServicePage /> },
     ],
   },
+
   // Auth pages render standalone (no navbar/footer).
   { path: APP_ROUTES.LOGIN, element: <LoginPage /> },
   { path: APP_ROUTES.SIGNUP, element: <SignUpPage /> },
   { path: APP_ROUTES.FORGOT_PASSWORD, element: <ForgotPasswordPage /> },
 
-  // Private zones — guarded by role, each with its own chrome.
+  // Client zone — any signed-in user.
   {
-    path: APP_ROUTES.APP,
     element: (
       <ProtectedRoute>
-        <ClientHomePage />
+        <AppLayout />
       </ProtectedRoute>
     ),
+    children: [
+      { path: APP_ROUTES.APP, element: <MaterialsPage /> },
+      { path: APP_ROUTES.APP_MATERIAL, element: <MaterialDetailPage /> },
+      { path: APP_ROUTES.APP_ACCOUNT, element: <AccountPage /> },
+    ],
   },
+
+  // Admin panel — admins only.
   {
-    path: APP_ROUTES.ADMIN,
     element: (
       <ProtectedRoute allow={['admin']}>
-        <AdminHomePage />
+        <AdminLayout />
       </ProtectedRoute>
     ),
+    children: [
+      { path: APP_ROUTES.ADMIN, element: <AdminDashboardPage /> },
+      { path: APP_ROUTES.ADMIN_LESSONS, element: <AdminLessonsPage /> },
+      { path: APP_ROUTES.ADMIN_LESSON_NEW, element: <AdminLessonFormPage /> },
+      { path: APP_ROUTES.ADMIN_LESSON_EDIT, element: <AdminLessonFormPage /> },
+      { path: APP_ROUTES.ADMIN_TAXONOMY, element: <TaxonomyPage /> },
+      { path: APP_ROUTES.ADMIN_BLOG, element: <AdminBlogPage /> },
+      { path: APP_ROUTES.ADMIN_BLOG_NEW, element: <AdminBlogFormPage /> },
+      { path: APP_ROUTES.ADMIN_BLOG_EDIT, element: <AdminBlogFormPage /> },
+      { path: APP_ROUTES.ADMIN_CLIENTS, element: <AdminClientsPage /> },
+      { path: APP_ROUTES.ADMIN_REVENUE, element: <AdminRevenuePage /> },
+    ],
   },
 ])
