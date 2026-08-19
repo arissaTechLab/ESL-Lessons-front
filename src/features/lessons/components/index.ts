@@ -1,5 +1,4 @@
 export { LessonCard, SeriesIcon } from './LessonCard'
-export { LessonCardWide } from './LessonCardWide'
 export { LessonDetailContent } from './LessonDetailContent'
 export { LessonLevelBadge } from './LessonLevelBadge'
 export { CategoryCard } from './CategoryCard'

@@ -21,4 +21,8 @@ export interface Lesson {
   isSeries: boolean
   /** Publication state (admin). */
   status: LessonStatus
+  /** Optional thumbnail image (from /public). Falls back to a placeholder. */
+  image?: string
+  /** Reference code (e.g. "POD.01") — used on Grammar lessons. */
+  reference?: string
 }

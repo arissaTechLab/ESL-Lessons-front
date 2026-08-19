@@ -1,8 +1,10 @@
+import type { ReactNode } from 'react'
+
 interface PageHeaderProps {
   /** Main heading — the only piece that changes between subpages. */
   title: string
-  /** Optional supporting line under the title. */
-  subtitle?: string
+  /** Optional supporting line under the title (text, or JSX for line breaks). */
+  subtitle?: ReactNode
   /** Background image. Defaults to the shared subpage header image. */
   imageSrc?: string
 }

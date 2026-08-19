@@ -16,6 +16,8 @@ export const LESSONS: readonly Lesson[] = [
     isFree: true,
     isSeries: true,
     status: 'published',
+    image: '/lesson-img-ex.jpeg',
+    reference: 'POD.01',
   },
   {
     id: 'sleep-science',
@@ -27,6 +29,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: true,
     isSeries: false,
     status: 'published',
+    reference: 'POD.02',
   },
   {
     id: 'remote-work',
@@ -38,6 +41,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: true,
     isSeries: false,
     status: 'published',
+    reference: 'POD.03',
   },
   {
     id: 'climate-solutions',
@@ -49,6 +53,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: true,
     isSeries: true,
     status: 'published',
+    reference: 'POD.04',
   },
   {
     id: 'ai-everyday',
@@ -60,6 +65,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: false,
     isSeries: false,
     status: 'draft',
+    reference: 'POD.05',
   },
   {
     id: 'street-food',
@@ -71,6 +77,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: false,
     isSeries: true,
     status: 'published',
+    reference: 'POD.06',
   },
   {
     id: 'phrasal-travel',
@@ -82,6 +89,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: false,
     isSeries: false,
     status: 'draft',
+    reference: 'POD.07',
   },
   {
     id: 'social-media',
@@ -93,6 +101,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: false,
     isSeries: false,
     status: 'published',
+    reference: 'POD.08',
   },
   {
     id: 'money-habits',
@@ -104,6 +113,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: false,
     isSeries: false,
     status: 'published',
+    reference: 'POD.09',
   },
   {
     id: 'pronounce-th',
@@ -115,6 +125,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: false,
     isSeries: true,
     status: 'draft',
+    reference: 'POD.10',
   },
   {
     id: 'wild-places',
@@ -126,6 +137,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: false,
     isSeries: false,
     status: 'published',
+    reference: 'POD.11',
   },
   {
     id: 'healthy-eating',
@@ -137,6 +149,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: false,
     isSeries: false,
     status: 'published',
+    reference: 'POD.12',
   },
   {
     id: 'ordering-food',
@@ -148,6 +161,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: true,
     isSeries: false,
     status: 'published',
+    reference: 'POD.13',
   },
   {
     id: 'job-interview',
@@ -159,6 +173,7 @@ export const LESSONS: readonly Lesson[] = [
     isFree: false,
     isSeries: true,
     status: 'published',
+    reference: 'POD.14',
   },
 ]
 

@@ -77,13 +77,23 @@ export function AdminLessonFormPage() {
         <div className="space-y-5 rounded-xl border border-ink/10 bg-white/60 p-6">
           <StatusField value={status} onChange={setStatus} />
 
-          <AdminInput
-            label="Title"
-            name="title"
-            placeholder="Lesson title"
-            defaultValue={editing?.title}
-            required
-          />
+          <div className="grid gap-5 sm:grid-cols-3">
+            <div className="sm:col-span-2">
+              <AdminInput
+                label="Title"
+                name="title"
+                placeholder="Lesson title"
+                defaultValue={editing?.title}
+                required
+              />
+            </div>
+            <AdminInput
+              label="Reference"
+              name="reference"
+              placeholder="e.g. POD.01"
+              defaultValue={editing?.reference}
+            />
+          </div>
 
           <div className="grid gap-5 sm:grid-cols-3">
             <AdminSelect

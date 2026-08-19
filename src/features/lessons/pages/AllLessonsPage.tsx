@@ -4,7 +4,7 @@ import { PageHeader } from '@/shared/components'
 import { APP_ROUTES } from '@/config/routes.constants'
 import { CtaSection } from '@/features/landing'
 import {
-  LessonCardWide,
+  LessonCard,
   CategoryCard,
   LessonFilters,
   type LessonFiltersState,
@@ -28,12 +28,19 @@ const DEFAULT_FILTERS: LessonFiltersState = {
 function SectionHeading({
   title,
   action,
+  inlineAction = false,
 }: {
   title: string
   action?: React.ReactNode
+  /** Place the action right next to the title instead of the far right. */
+  inlineAction?: boolean
 }) {
   return (
-    <div className="flex items-center justify-between gap-3">
+    <div
+      className={`flex items-center gap-3 ${
+        inlineAction ? 'flex-wrap' : 'justify-between'
+      }`}
+    >
       <h2 className="font-heading text-xl font-bold uppercase tracking-wide text-ink sm:text-2xl">
         {title}
       </h2>
@@ -44,9 +51,9 @@ function SectionHeading({
 
 function LessonGrid({ lessons }: { lessons: readonly Lesson[] }) {
   return (
-    <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
       {lessons.map((lesson) => (
-        <LessonCardWide key={lesson.id} lesson={lesson} />
+        <LessonCard key={lesson.id} lesson={lesson} />
       ))}
     </div>
   )
@@ -72,17 +79,22 @@ export function AllLessonsPage() {
       sortLessons(
         LESSONS.filter((lesson) => lesson.isFree),
         'recent',
-      ).slice(0, 3),
+      ).slice(0, 4),
     [],
   )
   const recentLessons = useMemo(
-    () => sortLessons([...LESSONS], 'recent').slice(0, 3),
+    () => sortLessons([...LESSONS], 'recent').slice(0, 4),
     [],
   )
   // No popularity metric yet — curated selection (mirrors the most-downloaded
   // lessons on the admin dashboard). Swap the ids when real data lands.
   const popularLessons = useMemo(() => {
-    const popularIds = ['space-travel', 'sleep-science', 'remote-work']
+    const popularIds = [
+      'space-travel',
+      'sleep-science',
+      'remote-work',
+      'street-food',
+    ]
     return popularIds
       .map((id) => LESSONS.find((lesson) => lesson.id === id))
       .filter((lesson): lesson is Lesson => Boolean(lesson))
@@ -92,8 +104,13 @@ export function AllLessonsPage() {
     <>
       <PageHeader
         title="Explore the lesson library"
-        subtitle="1-on-1 ESL materials unlike anything else on the internet.
-Knock their socks off - without the prep time. "
+        subtitle={
+          <>
+            1-on-1 ESL materials unlike anything else on the internet.
+            <br />
+            Knock their socks off - without the prep time.
+          </>
+        }
       />
 
       <div className="mx-auto max-w-6xl px-4 pt-10 sm:px-6">
@@ -130,6 +147,7 @@ Knock their socks off - without the prep time. "
           <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
             <SectionHeading
               title="Free Lessons"
+              inlineAction
               action={
                 <Link
                   to={APP_ROUTES.FREE_LESSONS}

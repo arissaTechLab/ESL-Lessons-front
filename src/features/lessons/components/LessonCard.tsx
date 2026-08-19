@@ -4,6 +4,7 @@ import { Placeholder, buttonVariants } from '@/shared/components'
 import { lessonPath } from '@/config/routes.constants'
 import type { Lesson } from '../types/lesson.types'
 import { formatLessonDate } from '../data/lessons'
+import { CATEGORY_ICONS } from '../data/categories'
 import { LessonLevelBadge } from './LessonLevelBadge'
 
 function StarIcon() {
@@ -36,7 +37,7 @@ function LockIcon() {
 }
 
 /** "Part of a series" marker — see the note in the filters bar. */
-export function SeriesIcon({ className = 'size-4' }: { className?: string }) {
+export function SeriesIcon({ className = 'size-5' }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -56,9 +57,31 @@ export function SeriesIcon({ className = 'size-4' }: { className?: string }) {
 }
 
 /**
+ * Placeholder for the per-category icon. Real icons are uploaded to /public;
+ * swap this for an <img> of the category's icon once they're available.
+ */
+function CategoryIconPlaceholder() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="size-5"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M3 11.5 11.5 3H20a1 1 0 0 1 1 1v8.5L12.5 21a1.5 1.5 0 0 1-2.1 0l-7.4-7.4a1.5 1.5 0 0 1 0-2.1Z" />
+      <circle cx="16" cy="8" r="1.2" />
+    </svg>
+  )
+}
+
+/**
  * The single, data-driven card used for every lesson across the site. Only the
  * `lesson` data changes — the layout is fixed. Every slot reserves a constant
- * height (access/series row, 2-line title, level strip, meta lines) so cards
+ * height (access row, level bar, 2-line title, date/reference lines) so cards
  * never differ in height, whether or not a lesson has a series icon.
  */
 export function LessonCard({
@@ -74,9 +97,8 @@ export function LessonCard({
 }) {
   return (
     <article className="flex flex-col rounded-xl border border-ink/10 bg-white p-3 shadow-xl">
-      {/* Access badge + series marker — fixed height so the series icon
-          (or its absence) never changes the card height. */}
-      <div className="mb-2 flex h-7 items-center justify-between ">
+      {/* Access badge (left) + category / series icons (right). */}
+      <div className="mb-2 flex items-center justify-between gap-2">
         {lesson.isFree ? (
           <span className="flex items-center gap-1 text-xs font-bold uppercase text-brand-600">
             <StarIcon />
@@ -88,40 +110,70 @@ export function LessonCard({
             Paid
           </span>
         )}
-        {lesson.isSeries && (
+
+        <div className="flex shrink-0 items-center gap-1.5">
+          {lesson.isSeries && (
+            <span
+              className="grid size-10 place-items-center rounded-md bg-ink text-white"
+              title="Part of a series"
+            >
+              <SeriesIcon />
+            </span>
+          )}
+
+          {/* Category icon (white SVG on the black box). */}
           <span
-            className="grid size-7 place-items-center rounded-full border border-ink/20 text-ink-soft"
-            title="Part of a series"
+            className="grid size-10 place-items-center rounded-md bg-ink text-white"
+            title={lesson.category}
           >
-            <SeriesIcon />
+            {CATEGORY_ICONS[lesson.category] ? (
+              <img
+                src={encodeURI(CATEGORY_ICONS[lesson.category] as string)}
+                alt=""
+                className="size-6"
+              />
+            ) : (
+              <CategoryIconPlaceholder />
+            )}
           </span>
-        )}
+        </div>
       </div>
 
-      {/* Thumbnail with the category highlighted over it (bottom-left, away
-          from the level strip below the title). */}
+      {/* 16:9 thumbnail with the category name pill over it (top-right). */}
       <div className="relative">
-        <Placeholder label="" className="aspect-[4/3] w-full rounded-lg" />
-        <span className="absolute bottom-2 left-2 max-w-[calc(100%-1rem)] truncate rounded-full bg-brand-500 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow-md">
+        {lesson.image ? (
+          <img
+            src={lesson.image}
+            alt=""
+            className="aspect-video w-full rounded-t-lg object-cover"
+          />
+        ) : (
+          <Placeholder
+            label=""
+            className="aspect-video w-full rounded-t-lg rounded-b-none"
+          />
+        )}
+
+        <span className="absolute right-2 top-2 max-w-[calc(100%-1rem)] truncate rounded-full bg-ink px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow-md">
           {lesson.category}
         </span>
       </div>
+
+      {/* Full level bar — joined to the image (flat top, rounded bottom). */}
+      <LessonLevelBadge level={lesson.level} className="rounded-b-lg" />
 
       <h3 className="mt-3 line-clamp-2 min-h-[2.6em] font-heading text-sm font-bold uppercase leading-snug text-ink">
         {lesson.title}
       </h3>
 
-      <div className="mt-2">
-        <LessonLevelBadge level={lesson.level} />
-      </div>
-
       <div className="mt-3 space-y-0.5 text-xs text-ink-soft">
-        <p className="truncate">
-          <span className="font-semibold text-ink">Topic:</span> {lesson.topic}
-        </p>
         <p className="truncate">
           <span className="font-semibold text-ink">Date added:</span>{' '}
           {formatLessonDate(lesson.dateAdded)}
+        </p>
+        <p className="truncate">
+          <span className="font-semibold text-ink">Reference:</span>{' '}
+          {lesson.reference ?? '—'}
         </p>
       </div>
 
