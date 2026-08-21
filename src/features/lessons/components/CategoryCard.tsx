@@ -15,7 +15,7 @@ export function CategoryCard({ category }: { category: LessonCategory }) {
         />
         {/* Category icon (white SVG on the black box). */}
         <span
-          className="absolute left-3 top-3 grid size-10 place-items-center rounded-md bg-ink text-white shadow-md"
+          className="absolute left-3 top-3 grid size-10 place-items-center rounded-md border-2 border-white bg-ink text-white shadow-md"
           title={category.title}
         >
           <img src={encodeURI(category.icon)} alt="" className="size-6" />

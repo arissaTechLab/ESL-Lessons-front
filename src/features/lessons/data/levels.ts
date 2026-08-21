@@ -22,7 +22,7 @@ export const LEVEL_META: Record<LessonLevel, LevelMeta> = {
     text: '#27170c',
   },
   intermediate: {
-    label: 'Intermediate',
+    label: 'Lower-Intermediate',
     tags: ['B1'],
     bg: '#e1d5c9',
     text: '#27170c',
