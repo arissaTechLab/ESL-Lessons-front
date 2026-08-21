@@ -1,7 +1,9 @@
-import { useMemo, useState } from 'react'
-import { LESSONS, LessonCard } from '@/features/lessons'
+import { useState } from 'react'
+import { LessonCard } from '@/features/lessons'
 import { clientMaterialPath } from '@/config/routes.constants'
-import { useFoldersStore } from '@/features/client/store/folders.store'
+import { useAsync } from '@/hooks/useAsync'
+import { AsyncSection } from '@/shared/components/AsyncSection'
+import { clientService } from '@/features/client/services/client.service'
 import { FolderPicker } from '@/features/client/components'
 
 const UNFILED = 'none'
@@ -40,62 +42,61 @@ function FolderChip({
 }
 
 export function MaterialsPage() {
-  const folders = useFoldersStore((s) => s.folders)
-  const assignments = useFoldersStore((s) => s.assignments)
-  const assign = useFoldersStore((s) => s.assign)
-  const createFolder = useFoldersStore((s) => s.createFolder)
-  const deleteFolder = useFoldersStore((s) => s.deleteFolder)
-
   const [search, setSearch] = useState('')
   const [tab, setTab] = useState<string>('all')
   const [folder, setFolder] = useState<string>('all')
   const [creating, setCreating] = useState(false)
   const [name, setName] = useState('')
+  // Bumped after every folder mutation so both queries refetch.
+  const [version, setVersion] = useState(0)
 
-  // lessonId -> folderId, for O(1) lookups.
-  const folderOf = useMemo(() => {
-    const map = new Map<string, string>()
-    for (const a of assignments) map.set(a.lessonId, a.folderId)
-    return map
-  }, [assignments])
+  const refresh = () => setVersion((v) => v + 1)
 
-  const counts = useMemo(() => {
-    const byFolder = new Map<string, number>()
-    for (const a of assignments) {
-      byFolder.set(a.folderId, (byFolder.get(a.folderId) ?? 0) + 1)
-    }
-    return {
-      total: LESSONS.length,
-      unfiled: LESSONS.length - assignments.length,
-      byFolder,
-    }
-  }, [assignments])
+  const foldersState = useAsync(
+    (signal) => clientService.folders(signal),
+    [version],
+  )
 
-  const results = useMemo(() => {
-    const query = search.trim().toLowerCase()
-    return LESSONS.filter((lesson) => {
-      if (tab === 'free' && !lesson.isFree) return false
-      if (tab === 'paid' && lesson.isFree) return false
+  const materialsState = useAsync(
+    (signal) =>
+      clientService.materials(
+        {
+          q: search.trim() || undefined,
+          tab: tab as 'all' | 'free' | 'paid',
+          folder:
+            folder === 'all'
+              ? undefined
+              : folder === UNFILED
+                ? 'uncategorized'
+                : folder,
+          limit: 100,
+        },
+        signal,
+      ),
+    [search, tab, folder, version],
+  )
 
-      const assigned = folderOf.get(lesson.id) ?? null
-      if (folder === UNFILED && assigned !== null) return false
-      if (folder !== 'all' && folder !== UNFILED && assigned !== folder)
-        return false
+  const folders = foldersState.data?.folders ?? []
 
-      if (query === '') return true
-      return (
-        lesson.title.toLowerCase().includes(query) ||
-        lesson.category.toLowerCase().includes(query) ||
-        lesson.topic.toLowerCase().includes(query)
-      )
-    })
-  }, [search, tab, folder, folderOf])
-
-  const addFolder = () => {
+  const addFolder = async () => {
     const trimmed = name.trim()
-    if (trimmed) createFolder(trimmed)
+    if (trimmed) {
+      await clientService.createFolder(trimmed).catch(() => undefined)
+      refresh()
+    }
     setName('')
     setCreating(false)
+  }
+
+  const removeFolder = async (id: string) => {
+    await clientService.deleteFolder(id).catch(() => undefined)
+    setFolder('all')
+    refresh()
+  }
+
+  const assign = async (lessonId: string, folderId: string | null) => {
+    await clientService.assign(lessonId, folderId).catch(() => undefined)
+    refresh()
   }
 
   return (
@@ -136,70 +137,80 @@ export function MaterialsPage() {
       </div>
 
       {/* Folder filter + management */}
-      <div className="mb-4 flex flex-wrap items-center gap-2">
-        <FolderChip
-          label="All"
-          count={counts.total}
-          active={folder === 'all'}
-          onClick={() => setFolder('all')}
-        />
-        <FolderChip
-          label="Uncategorized"
-          count={counts.unfiled}
-          active={folder === UNFILED}
-          onClick={() => setFolder(UNFILED)}
-        />
-        {folders.map((f) => (
-          <FolderChip
-            key={f.id}
-            label={f.name}
-            count={counts.byFolder.get(f.id) ?? 0}
-            active={folder === f.id}
-            onClick={() => setFolder(f.id)}
+      <AsyncSection
+        state={foldersState}
+        isEmpty={() => false}
+        skeleton={
+          <div
+            className="mb-4 h-9 w-full max-w-md animate-pulse rounded-full bg-accent-100"
+            aria-hidden="true"
           />
-        ))}
-
-        {creating ? (
-          <span className="flex items-center gap-2">
-            <input
-              autoFocus
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && addFolder()}
-              placeholder="Folder name"
-              className="w-40 rounded-full border border-ink/15 bg-white px-3 py-1.5 text-sm focus:border-brand-500 focus:outline-none"
+        }
+      >
+        {(summary) => (
+          <div className="mb-4 flex flex-wrap items-center gap-2">
+            <FolderChip
+              label="All"
+              count={summary.allCount}
+              active={folder === 'all'}
+              onClick={() => setFolder('all')}
             />
-            <button
-              type="button"
-              onClick={addFolder}
-              className="text-sm font-semibold text-brand-600 hover:text-brand-700"
-            >
-              Add
-            </button>
-          </span>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setCreating(true)}
-            className="flex items-center gap-1 rounded-full border border-dashed border-ink/30 px-3 py-1.5 text-sm font-medium text-ink-soft transition hover:border-brand-400 hover:text-brand-600"
-          >
-            + New folder
-          </button>
-        )}
+            <FolderChip
+              label="Uncategorized"
+              count={summary.uncategorizedCount}
+              active={folder === UNFILED}
+              onClick={() => setFolder(UNFILED)}
+            />
+            {summary.folders.map((f) => (
+              <FolderChip
+                key={f.id}
+                label={f.name}
+                count={f.count}
+                active={folder === f.id}
+                onClick={() => setFolder(f.id)}
+              />
+            ))}
 
-        {folder !== 'all' && folder !== UNFILED && (
-          <button
-            type="button"
-            onClick={() => {
-              deleteFolder(folder)
-              setFolder('all')
-            }}
-            className="ml-1 text-sm font-medium text-rose-600 transition hover:text-rose-700"
-          >
-            Delete folder
-          </button>
+            {creating ? (
+              <span className="flex items-center gap-2">
+                <input
+                  autoFocus
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && void addFolder()}
+                  placeholder="Folder name"
+                  className="w-40 rounded-full border border-ink/15 bg-white px-3 py-1.5 text-sm focus:border-brand-500 focus:outline-none"
+                />
+                <button
+                  type="button"
+                  onClick={() => void addFolder()}
+                  className="text-sm font-semibold text-brand-600 hover:text-brand-700"
+                >
+                  Add
+                </button>
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setCreating(true)}
+                className="flex items-center gap-1 rounded-full border border-dashed border-ink/30 px-3 py-1.5 text-sm font-medium text-ink-soft transition hover:border-brand-400 hover:text-brand-600"
+              >
+                + New folder
+              </button>
+            )}
+
+            {folder !== 'all' && folder !== UNFILED && (
+              <button
+                type="button"
+                onClick={() => void removeFolder(folder)}
+                className="ml-1 text-sm font-medium text-rose-600 transition hover:text-rose-700"
+              >
+                Delete folder
+              </button>
+            )}
+          </div>
         )}
-      </div>
+      </AsyncSection>
 
       {/* Free / paid tabs */}
       <div className="mb-6 inline-flex rounded-lg border border-ink/15 bg-white p-1">
@@ -219,28 +230,34 @@ export function MaterialsPage() {
         ))}
       </div>
 
-      {results.length > 0 ? (
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {results.map((lesson) => (
-            <LessonCard
-              key={lesson.id}
-              lesson={lesson}
-              to={clientMaterialPath(lesson.id)}
-              footer={
-                <FolderPicker
-                  value={folderOf.get(lesson.id) ?? null}
-                  folders={folders}
-                  onChange={(folderId) => assign(lesson.id, folderId)}
-                />
-              }
-            />
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-xl border border-dashed border-ink/20 py-16 text-center">
-          <p className="text-ink-soft">No lessons match this view.</p>
-        </div>
-      )}
+      <AsyncSection
+        state={materialsState}
+        isEmpty={(page) => page.items.length === 0}
+        empty={
+          <div className="rounded-xl border border-dashed border-ink/20 py-16 text-center">
+            <p className="text-ink-soft">No lessons match this view.</p>
+          </div>
+        }
+      >
+        {(page) => (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {page.items.map((lesson) => (
+              <LessonCard
+                key={lesson.id}
+                lesson={lesson}
+                to={clientMaterialPath(lesson.slug)}
+                footer={
+                  <FolderPicker
+                    value={lesson.folderId}
+                    folders={folders}
+                    onChange={(folderId) => void assign(lesson.id, folderId)}
+                  />
+                }
+              />
+            ))}
+          </div>
+        )}
+      </AsyncSection>
     </>
   )
 }

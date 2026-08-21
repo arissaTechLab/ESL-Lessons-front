@@ -1,13 +1,17 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useDropdown } from '@/shared/hooks/useDropdown'
 import { APP_ROUTES } from '@/config/routes.constants'
-import { CURRENT_USER } from '../data/account'
+import { useAuthStore } from '@/store/auth.store'
 
 function AccountMenu() {
   const { open, setOpen, ref } = useDropdown()
   const navigate = useNavigate()
-  const initials =
-    `${CURRENT_USER.firstName[0] ?? ''}${CURRENT_USER.lastName[0] ?? ''}`.toUpperCase()
+  const user = useAuthStore((s) => s.user)
+  const logout = useAuthStore((s) => s.logout)
+
+  if (!user) return null
+
+  const initials = user.initials
 
   return (
     <div ref={ref} className="relative">
@@ -39,10 +43,10 @@ function AccountMenu() {
         <div className="absolute right-0 top-full z-30 mt-2 w-56 rounded-xl border border-ink/10 bg-white p-2 shadow-lg">
           <div className="border-b border-ink/10 px-3 pb-2">
             <p className="text-sm font-semibold text-ink">
-              {CURRENT_USER.firstName} {CURRENT_USER.lastName}
+              {user.fullName}
             </p>
             <p className="truncate text-xs text-ink-muted">
-              {CURRENT_USER.email}
+              {user.email}
             </p>
           </div>
           <Link
@@ -54,7 +58,9 @@ function AccountMenu() {
           </Link>
           <button
             type="button"
-            onClick={() => navigate(APP_ROUTES.HOME)}
+            onClick={() => {
+              void logout().then(() => navigate(APP_ROUTES.HOME))
+            }}
             className="block w-full rounded-lg px-3 py-2 text-left text-sm text-ink-soft transition hover:bg-ink/5 hover:text-ink"
           >
             Log out

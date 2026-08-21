@@ -1,5 +1,5 @@
 import { useDropdown } from '@/shared/hooks/useDropdown'
-import type { Folder } from '../store/folders.store'
+import type { Folder } from '../services/client.service'
 
 const UNFILED = 'none'
 
