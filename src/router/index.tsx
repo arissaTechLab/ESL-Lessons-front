@@ -18,7 +18,12 @@ import {
 } from '@/features/resources'
 import { FaqPage } from '@/features/faq'
 import { PrivacyPolicyPage, TermsOfServicePage } from '@/features/legal'
-import { LoginPage, SignUpPage, ForgotPasswordPage } from '@/features/auth'
+import {
+  ForgotPasswordPage,
+  LoginPage,
+  ProtectedRoute,
+  SignUpPage,
+} from '@/features/auth'
 import {
   ClientLayout,
   MaterialsPage,
@@ -69,7 +74,11 @@ export const router = createBrowserRouter([
   // Client zone — its own shell (top bar), separate from the public site.
   {
     path: APP_ROUTES.CLIENT_MATERIALS,
-    element: <ClientLayout />,
+    element: (
+      <ProtectedRoute>
+        <ClientLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <MaterialsPage /> },
       { path: 'materials/:slug', element: <ClientMaterialPage /> },
@@ -79,7 +88,11 @@ export const router = createBrowserRouter([
   // Admin area — its own shell (sidebar), separate from the public site.
   {
     path: APP_ROUTES.ADMIN,
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoute allow={['admin']}>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
       { index: true, element: <AdminDashboardPage /> },
       { path: 'lessons', element: <AdminLessonsPage /> },

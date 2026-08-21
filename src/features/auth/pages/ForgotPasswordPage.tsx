@@ -6,14 +6,17 @@ import {
   AuthTextField,
   SubmitButton,
 } from '@/features/auth/components'
+import { ApiError } from '@/service'
+import { authService } from '@/features/auth/services/auth.service'
 import { isValidEmail } from '@/features/auth/lib/validation'
 
 export function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [error, setError] = useState<string>()
   const [sent, setSent] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
     if (!email.trim()) {
       setError('Enter your email.')
@@ -24,7 +27,22 @@ export function ForgotPasswordPage() {
       return
     }
     setError(undefined)
-    setSent(true) // Mock — pretend the reset link was sent.
+    setIsSubmitting(true)
+
+    try {
+      await authService.forgotPassword(email)
+      // The API answers 202 whether or not the address exists, so the
+      // confirmation below is deliberately non-committal.
+      setSent(true)
+    } catch (caught) {
+      setError(
+        caught instanceof ApiError
+          ? caught.message
+          : 'Could not send the reset link. Please try again.',
+      )
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -66,7 +84,9 @@ export function ForgotPasswordPage() {
               }}
             />
             <div className="pt-2">
-              <SubmitButton>Send reset link</SubmitButton>
+              <SubmitButton isLoading={isSubmitting} loadingLabel="Sending…">
+                Send reset link
+              </SubmitButton>
             </div>
           </form>
 

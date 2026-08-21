@@ -1,9 +1,12 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { APP_ROUTES } from '@/config/routes.constants'
+import { ApiError } from '@/service'
+import { useAuthStore } from '@/store/auth.store'
 import {
   AuthLayout,
   AuthTextField,
+  FormError,
   SubmitButton,
 } from '@/features/auth/components'
 import { isValidEmail } from '@/features/auth/lib/validation'
@@ -17,8 +20,11 @@ type LoginErrors = Partial<Record<keyof LoginForm, string>>
 
 export function LoginPage() {
   const navigate = useNavigate()
+  const login = useAuthStore((state) => state.login)
   const [form, setForm] = useState<LoginForm>({ email: '', password: '' })
   const [errors, setErrors] = useState<LoginErrors>({})
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const update = <K extends keyof LoginForm>(field: K, value: LoginForm[K]) => {
     setForm((current) => ({ ...current, [field]: value }))
@@ -27,17 +33,33 @@ export function LoginPage() {
     )
   }
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
+    setSubmitError(null)
+
     const next: LoginErrors = {}
     if (!form.email.trim()) next.email = 'Enter your email.'
     else if (!isValidEmail(form.email)) next.email = 'Enter a valid email.'
     if (!form.password) next.password = 'Enter your password.'
     setErrors(next)
+    if (Object.keys(next).length > 0) return
 
-    if (Object.keys(next).length === 0) {
-      // Mock — any credentials are accepted; go straight to the admin panel.
-      navigate(APP_ROUTES.ADMIN)
+    setIsSubmitting(true)
+    try {
+      const user = await login(form)
+      // The role decides the destination: admins manage, clients consume.
+      navigate(
+        user.role === 'admin' ? APP_ROUTES.ADMIN : APP_ROUTES.CLIENT_MATERIALS,
+        { replace: true },
+      )
+    } catch (caught) {
+      setSubmitError(
+        caught instanceof ApiError
+          ? caught.message
+          : 'Could not sign you in. Please try again.',
+      )
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -72,8 +94,12 @@ export function LoginPage() {
           </Link>
         </div>
 
+        <FormError message={submitError} />
+
         <div className="pt-2">
-          <SubmitButton>Log in</SubmitButton>
+          <SubmitButton isLoading={isSubmitting} loadingLabel="Signing in…">
+            Log in
+          </SubmitButton>
         </div>
       </form>
 

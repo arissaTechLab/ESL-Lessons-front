@@ -1,9 +1,12 @@
 import { useState, type FormEvent } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { APP_ROUTES } from '@/config/routes.constants'
+import { ApiError } from '@/service'
+import { useAuthStore } from '@/store/auth.store'
 import {
   AuthLayout,
   AuthTextField,
+  FormError,
   SubmitButton,
 } from '@/features/auth/components'
 import { isValidEmail } from '@/features/auth/lib/validation'
@@ -28,8 +31,11 @@ const INITIAL: SignupForm = {
 
 export function SignUpPage() {
   const navigate = useNavigate()
+  const register = useAuthStore((state) => state.register)
   const [form, setForm] = useState<SignupForm>(INITIAL)
   const [errors, setErrors] = useState<SignupErrors>({})
+  const [submitError, setSubmitError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const update = <K extends keyof SignupForm>(
     field: K,
@@ -41,22 +47,42 @@ export function SignUpPage() {
     )
   }
 
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
+    setSubmitError(null)
     const next: SignupErrors = {}
     if (!form.firstName.trim()) next.firstName = 'Enter your first name.'
     if (!form.lastName.trim()) next.lastName = 'Enter your last name.'
     if (!form.email.trim()) next.email = 'Enter your email.'
     else if (!isValidEmail(form.email)) next.email = 'Enter a valid email.'
     if (!form.password) next.password = 'Create a password.'
-    else if (form.password.length < 8)
-      next.password = 'Use at least 8 characters.'
+    else if (!/^(?=.*[A-Za-z])(?=.*\d).{8,}$/.test(form.password))
+      next.password = 'Use at least 8 characters, with a letter and a number.'
     if (!form.agreed) next.agreed = 'Please accept the terms to continue.'
     setErrors(next)
 
-    if (Object.keys(next).length === 0) {
-      // Mock — account "created"; send them to log in.
-      navigate(APP_ROUTES.LOGIN)
+    if (Object.keys(next).length > 0) return
+
+    setIsSubmitting(true)
+    try {
+      // Registering signs you straight in; new accounts are always clients.
+      const { firstName, lastName, email, password, agreed } = form
+      await register({
+        firstName,
+        lastName,
+        email,
+        password,
+        acceptedTerms: agreed,
+      })
+      navigate(APP_ROUTES.CLIENT_MATERIALS, { replace: true })
+    } catch (caught) {
+      setSubmitError(
+        caught instanceof ApiError
+          ? caught.message
+          : 'Could not create your account. Please try again.',
+      )
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -129,7 +155,10 @@ export function SignUpPage() {
         </div>
 
         <div className="pt-2">
-          <SubmitButton>Create my account</SubmitButton>
+          <FormError message={submitError} />
+          <SubmitButton isLoading={isSubmitting} loadingLabel="Creating…">
+            Create my account
+          </SubmitButton>
         </div>
       </form>
 

@@ -1,3 +1,5 @@
 export { AuthLayout } from './AuthLayout'
 export { AuthTextField } from './AuthTextField'
 export { SubmitButton } from './SubmitButton'
+export { FormError } from './FormError'
+export { ProtectedRoute } from './ProtectedRoute'
