@@ -1,12 +1,14 @@
-import { useMemo, useState } from 'react'
-import { PageHeader } from '@/shared/components'
+import { useState } from 'react'
+import { AsyncSection, PageHeader } from '@/shared/components'
+import { useAsync } from '@/hooks'
 import { CtaSection } from '@/features/landing'
 import {
   GrammarFilters,
   GrammarTable,
   type GrammarFiltersState,
 } from '@/features/grammar/components'
-import { GRAMMAR_ENTRIES } from '@/features/grammar/data/grammar'
+import { grammarService } from '@/features/grammar/services/grammar.service'
+import type { GrammarEntry } from '@/features/grammar/types/grammar.types'
 
 const DEFAULT_FILTERS: GrammarFiltersState = {
   search: '',
@@ -21,18 +23,21 @@ export function GrammarIndexPage() {
     setFilters((current) => ({ ...current, ...patch }))
   const clear = () => setFilters(DEFAULT_FILTERS)
 
-  const entries = useMemo(() => {
+  // The level filter drives the `cefr` query server-side.
+  const state = useAsync(
+    (signal) => grammarService.list(filters.levels, signal),
+    [filters.levels.join(',')],
+  )
+
+  // Search and sort stay client-side over the fetched rows.
+  const refine = (rows: readonly GrammarEntry[]): GrammarEntry[] => {
     const query = filters.search.trim().toLowerCase()
-    const matched = GRAMMAR_ENTRIES.filter((entry) => {
-      const matchesLevel =
-        filters.levels.length === 0 || filters.levels.includes(entry.level)
-      const matchesQuery =
-        query === '' || entry.point.toLowerCase().includes(query)
-      return matchesLevel && matchesQuery
-    })
+    const matched = rows.filter(
+      (entry) => query === '' || entry.point.toLowerCase().includes(query),
+    )
     const sorted = [...matched].sort((a, b) => a.point.localeCompare(b.point))
     return filters.sort === 'za' ? sorted.reverse() : sorted
-  }, [filters])
+  }
 
   return (
     <>
@@ -46,7 +51,9 @@ export function GrammarIndexPage() {
       </div>
 
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <GrammarTable entries={entries} />
+        <AsyncSection state={state} isEmpty={() => false}>
+          {(entries) => <GrammarTable entries={refine(entries)} />}
+        </AsyncSection>
       </section>
 
       <CtaSection />

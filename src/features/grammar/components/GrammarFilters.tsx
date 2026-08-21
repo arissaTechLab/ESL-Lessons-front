@@ -1,5 +1,11 @@
 import { MultiSelectDropdown, SortDropdown } from '@/shared/components'
-import { GRAMMAR_LEVELS } from '../data/grammar'
+
+/** Level options for the grammar filter dropdown. */
+const GRAMMAR_LEVELS = [
+  { value: 'B1', label: 'B1 (Intermediate)' },
+  { value: 'B2', label: 'B2 (Upper-Intermediate)' },
+  { value: 'C1', label: 'C1 (Advanced)' },
+] as const
 
 export interface GrammarFiltersState {
   search: string

@@ -1,9 +1,12 @@
-import { PageHeader } from '@/shared/components'
+import { AsyncSection, PageHeader } from '@/shared/components'
+import { useAsync } from '@/hooks'
 import { TestimonialsSection } from '@/features/landing'
 import { PricingCard } from '@/features/pricing/components'
-import { PRICING_PLANS } from '@/features/pricing/data/plans'
+import { pricingService } from '@/features/pricing/services/pricing.service'
 
 export function PricingPage() {
+  const state = useAsync((signal) => pricingService.list(signal))
+
   return (
     <>
       <PageHeader
@@ -26,11 +29,15 @@ export function PricingPage() {
 
       {/* Plans */}
       <section className="mx-auto max-w-4xl px-4 py-14 sm:px-6">
-        <div className="grid gap-6 md:grid-cols-2">
-          {PRICING_PLANS.map((plan) => (
-            <PricingCard key={plan.id} plan={plan} />
-          ))}
-        </div>
+        <AsyncSection state={state}>
+          {(plans) => (
+            <div className="grid gap-6 md:grid-cols-2">
+              {plans.map((plan) => (
+                <PricingCard key={plan.id} plan={plan} />
+              ))}
+            </div>
+          )}
+        </AsyncSection>
 
         {/* Fine print */}
         <div className="mx-auto mt-10 max-w-2xl border-t border-ink/10 pt-6 text-left">

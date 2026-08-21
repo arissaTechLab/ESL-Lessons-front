@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { buttonVariants } from '@/shared/components'
 import { APP_ROUTES } from '@/config/routes.constants'
-import type { PricingPlan } from '../data/plans'
+import type { PricingPlan } from '../types/pricing.types'
 
 function PlanIcon({ featured }: { featured?: boolean }) {
   return (
