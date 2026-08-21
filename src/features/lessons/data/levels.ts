@@ -48,6 +48,26 @@ export const LEVEL_META: Record<LessonLevel, LevelMeta> = {
 }
 
 /** Level options for forms (value + human label). */
-export const LESSON_LEVEL_OPTIONS = (
-  Object.keys(LEVEL_META) as LessonLevel[]
-).map((value) => ({ value, label: LEVEL_META[value].label }))
+export const LESSON_LEVEL_OPTIONS = Object.entries(LEVEL_META).map(
+  ([value, meta]) => ({ value, label: meta.label }),
+)
+
+/** Neutral styling for a level created in Taxonomy after this map was written. */
+const FALLBACK_LEVEL_META: LevelMeta = {
+  label: 'Level',
+  tags: [],
+  bg: '#e5e0d8',
+  text: '#27170c',
+}
+
+/**
+ * Resolves how a level should look. Prefers what the API sent (levels and
+ * their colours are managed from admin Taxonomy); falls back to the seeded
+ * map, then to neutral styling, so an unknown level can never crash a card.
+ */
+export function resolveLevelMeta(
+  level: string,
+  meta?: LevelMeta,
+): LevelMeta {
+  return meta ?? LEVEL_META[level] ?? FALLBACK_LEVEL_META
+}

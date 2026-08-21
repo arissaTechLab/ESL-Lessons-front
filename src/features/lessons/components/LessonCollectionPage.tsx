@@ -1,10 +1,15 @@
-import { useMemo, useState } from 'react'
-import { PageHeader } from '@/shared/components'
+import { useState } from 'react'
+import { AsyncSection, PageHeader } from '@/shared/components'
+import { useAsync } from '@/hooks'
 import { CtaSection } from '@/features/landing'
+import { lessonsService } from '@/features/lessons/services/lessons.service'
+import type { LessonFilters as LessonQuery } from '../types/lesson.types'
 import { LessonCard } from './LessonCard'
-import { LessonFilters, type LessonFiltersState } from './LessonFilters'
-import { filterLessons } from '../lib/filter-lessons'
-import type { Lesson } from '../types/lesson.types'
+import {
+  LessonFilters,
+  toLessonQuery,
+  type LessonFiltersState,
+} from './LessonFilters'
 
 const DEFAULT_FILTERS: LessonFiltersState = {
   search: '',
@@ -17,17 +22,19 @@ const DEFAULT_FILTERS: LessonFiltersState = {
 interface LessonCollectionPageProps {
   title: string
   subtitle: string
-  lessons: readonly Lesson[]
+  /** Fixed part of the catalogue query (e.g. the category or `access=free`). */
+  query: LessonQuery
 }
 
 /**
  * Shared layout for a single lesson collection (a category or the free
  * lessons). Same header + filters (minus the category filter) + card grid.
+ * Filtering happens server-side: the bar's state merges into `query`.
  */
 export function LessonCollectionPage({
   title,
   subtitle,
-  lessons,
+  query,
 }: LessonCollectionPageProps) {
   const [filters, setFilters] = useState<LessonFiltersState>(DEFAULT_FILTERS)
 
@@ -35,9 +42,15 @@ export function LessonCollectionPage({
     setFilters((current) => ({ ...current, ...patch }))
   const clear = () => setFilters(DEFAULT_FILTERS)
 
-  const results = useMemo(
-    () => filterLessons(lessons, filters),
-    [lessons, filters],
+  const state = useAsync(
+    (signal) => lessonsService.list({ ...toLessonQuery(filters), ...query }, signal),
+    [
+      filters.search,
+      filters.levels.join(','),
+      filters.topics.join(','),
+      filters.sort,
+      JSON.stringify(query),
+    ],
   )
 
   return (
@@ -54,28 +67,36 @@ export function LessonCollectionPage({
       </div>
 
       <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <p className="text-sm text-ink-muted">
-          {results.length} {results.length === 1 ? 'lesson' : 'lessons'}
-        </p>
-
-        {results.length > 0 ? (
-          <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {results.map((lesson) => (
-              <LessonCard key={lesson.id} lesson={lesson} />
-            ))}
-          </div>
-        ) : (
-          <div className="mt-6 rounded-xl border border-dashed border-ink/20 py-16 text-center">
-            <p className="text-ink-soft">No lessons match your filters.</p>
-            <button
-              type="button"
-              onClick={clear}
-              className="mt-3 text-sm font-semibold text-brand-600 transition hover:text-brand-700"
-            >
-              Clear all filters
-            </button>
-          </div>
+        {state.data && (
+          <p className="text-sm text-ink-muted">
+            {state.data.total} {state.data.total === 1 ? 'lesson' : 'lessons'}
+          </p>
         )}
+
+        <AsyncSection
+          state={state}
+          isEmpty={(page) => page.items.length === 0}
+          empty={
+            <div className="mt-6 rounded-xl border border-dashed border-ink/20 py-16 text-center">
+              <p className="text-ink-soft">No lessons match your filters.</p>
+              <button
+                type="button"
+                onClick={clear}
+                className="mt-3 text-sm font-semibold text-brand-600 transition hover:text-brand-700"
+              >
+                Clear all filters
+              </button>
+            </div>
+          }
+        >
+          {(page) => (
+            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {page.items.map((lesson) => (
+                <LessonCard key={lesson.id} lesson={lesson} />
+              ))}
+            </div>
+          )}
+        </AsyncSection>
       </section>
 
       <CtaSection />

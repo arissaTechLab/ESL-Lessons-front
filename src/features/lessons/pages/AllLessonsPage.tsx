@@ -1,20 +1,17 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { PageHeader } from '@/shared/components'
+import { AsyncSection, PageHeader } from '@/shared/components'
+import { useAsync } from '@/hooks'
 import { APP_ROUTES } from '@/config/routes.constants'
 import { CtaSection } from '@/features/landing'
 import {
   LessonCard,
   CategoryCard,
   LessonFilters,
+  toLessonQuery,
   type LessonFiltersState,
 } from '@/features/lessons/components'
-import { LESSONS } from '@/features/lessons/data/lessons'
-import { LESSON_CATEGORIES } from '@/features/lessons/data/categories'
-import {
-  filterLessons,
-  sortLessons,
-} from '@/features/lessons/lib/filter-lessons'
+import { lessonsService } from '@/features/lessons/services/lessons.service'
 import type { Lesson } from '@/features/lessons/types/lesson.types'
 
 const DEFAULT_FILTERS: LessonFiltersState = {
@@ -59,6 +56,25 @@ function LessonGrid({ lessons }: { lessons: readonly Lesson[] }) {
   )
 }
 
+/** Skeleton matching the curated grids, inside the page container. */
+function SectionSkeleton() {
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+      <div
+        className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
+        aria-hidden="true"
+      >
+        {Array.from({ length: 4 }, (_, i) => (
+          <div
+            key={i}
+            className="h-56 animate-pulse rounded-xl border border-ink/10 bg-accent-100"
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
 export function AllLessonsPage() {
   const [filters, setFilters] = useState<LessonFiltersState>(DEFAULT_FILTERS)
 
@@ -72,32 +88,35 @@ export function AllLessonsPage() {
     filters.categories.length > 0 ||
     filters.topics.length > 0
 
-  const results = useMemo(() => filterLessons(LESSONS, filters), [filters])
+  // Filtering happens server-side: the bar's state becomes the catalogue query.
+  const results = useAsync(
+    (signal) => lessonsService.list(toLessonQuery(filters), signal),
+    [
+      filters.search,
+      filters.levels.join(','),
+      filters.categories.join(','),
+      filters.topics.join(','),
+      filters.sort,
+    ],
+  )
 
-  const freeLessons = useMemo(
-    () =>
-      sortLessons(
-        LESSONS.filter((lesson) => lesson.isFree),
-        'recent',
-      ).slice(0, 4),
-    [],
-  )
-  const recentLessons = useMemo(
-    () => sortLessons([...LESSONS], 'recent').slice(0, 4),
-    [],
-  )
-  // No popularity metric yet — curated selection (mirrors the most-downloaded
-  // lessons on the admin dashboard). Swap the ids when real data lands.
-  const popularLessons = useMemo(() => {
-    const popularIds = [
-      'space-travel',
-      'sleep-science',
-      'remote-work',
-      'street-food',
-    ]
-    return popularIds
-      .map((id) => LESSONS.find((lesson) => lesson.id === id))
-      .filter((lesson): lesson is Lesson => Boolean(lesson))
+  // The curated payload carries the lesson rows and per-category counts; the
+  // taxonomy list carries the tile art (image, icon, levels range).
+  const curated = useAsync(async (signal) => {
+    const [sections, categories] = await Promise.all([
+      lessonsService.curated(signal),
+      lessonsService.categories(signal),
+    ])
+    return {
+      freeLessons: sections.freeLessons,
+      mostRecent: sections.mostRecent,
+      categories: categories.map((tile) => ({
+        ...tile,
+        lessonCount:
+          sections.categories.find((c) => c.slug === tile.slug)?.lessonCount ??
+          tile.lessonCount,
+      })),
+    }
   }, [])
 
   return (
@@ -122,63 +141,69 @@ export function AllLessonsPage() {
           <SectionHeading
             title="Results"
             action={
-              <span className="text-sm text-ink-muted">
-                {results.length} {results.length === 1 ? 'lesson' : 'lessons'}
-              </span>
+              results.data && (
+                <span className="text-sm text-ink-muted">
+                  {results.data.total}{' '}
+                  {results.data.total === 1 ? 'lesson' : 'lessons'}
+                </span>
+              )
             }
           />
-          {results.length > 0 ? (
-            <LessonGrid lessons={results} />
-          ) : (
-            <div className="mt-8 rounded-xl border border-dashed border-ink/20 py-16 text-center">
-              <p className="text-ink-soft">No lessons match your filters.</p>
-              <button
-                type="button"
-                onClick={clear}
-                className="mt-3 text-sm font-semibold text-brand-600 transition hover:text-brand-700"
-              >
-                Clear all filters
-              </button>
-            </div>
-          )}
+          <AsyncSection
+            state={results}
+            isEmpty={(page) => page.items.length === 0}
+            empty={
+              <div className="mt-8 rounded-xl border border-dashed border-ink/20 py-16 text-center">
+                <p className="text-ink-soft">No lessons match your filters.</p>
+                <button
+                  type="button"
+                  onClick={clear}
+                  className="mt-3 text-sm font-semibold text-brand-600 transition hover:text-brand-700"
+                >
+                  Clear all filters
+                </button>
+              </div>
+            }
+          >
+            {(page) => <LessonGrid lessons={page.items} />}
+          </AsyncSection>
         </section>
       ) : (
-        <>
-          <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-            <SectionHeading
-              title="Free Lessons"
-              inlineAction
-              action={
-                <Link
-                  to={APP_ROUTES.FREE_LESSONS}
-                  className="text-xs font-semibold uppercase tracking-wide text-brand-600 transition hover:text-brand-700"
-                >
-                  View all free lessons →
-                </Link>
-              }
-            />
-            <LessonGrid lessons={freeLessons} />
-          </section>
+        <AsyncSection state={curated} skeleton={<SectionSkeleton />}>
+          {(data) => (
+            <>
+              <section className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+                <SectionHeading
+                  title="Free Lessons"
+                  inlineAction
+                  action={
+                    <Link
+                      to={APP_ROUTES.FREE_LESSONS}
+                      className="text-xs font-semibold uppercase tracking-wide text-brand-600 transition hover:text-brand-700"
+                    >
+                      View all free lessons →
+                    </Link>
+                  }
+                />
+                <LessonGrid lessons={data.freeLessons} />
+              </section>
 
-          <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
-            <SectionHeading title="Most Recent" />
-            <LessonGrid lessons={recentLessons} />
-          </section>
+              <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
+                <SectionHeading title="Most Recent" />
+                <LessonGrid lessons={data.mostRecent} />
+              </section>
 
-          <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
-            <SectionHeading title="All Lessons: Categories" />
-            <div className="mt-6 grid gap-6 sm:grid-cols-2">
-              {LESSON_CATEGORIES.map((category) => (
-                <CategoryCard key={category.id} category={category} />
-              ))}
-            </div>
-          </section>
-
-          <section className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">
-            <SectionHeading title="Most Popular" />
-            <LessonGrid lessons={popularLessons} />
-          </section>
-        </>
+              <section className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
+                <SectionHeading title="All Lessons: Categories" />
+                <div className="mt-6 grid gap-6 sm:grid-cols-2">
+                  {data.categories.map((category) => (
+                    <CategoryCard key={category.id} category={category} />
+                  ))}
+                </div>
+              </section>
+            </>
+          )}
+        </AsyncSection>
       )}
 
       <CtaSection />

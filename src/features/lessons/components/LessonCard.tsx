@@ -3,8 +3,7 @@ import { Link } from 'react-router-dom'
 import { Placeholder, buttonVariants } from '@/shared/components'
 import { lessonPath } from '@/config/routes.constants'
 import type { Lesson } from '../types/lesson.types'
-import { formatLessonDate } from '../data/lessons'
-import { CATEGORY_ICONS } from '../data/categories'
+import { formatLessonDate } from '../lib/format-lesson-date'
 import { LessonLevelBadge } from './LessonLevelBadge'
 
 function StarIcon() {
@@ -126,9 +125,9 @@ export function LessonCard({
             className="grid size-10 place-items-center rounded-md bg-ink text-white"
             title={lesson.category}
           >
-            {CATEGORY_ICONS[lesson.category] ? (
+            {lesson.categoryIcon ? (
               <img
-                src={encodeURI(CATEGORY_ICONS[lesson.category] as string)}
+                src={encodeURI(lesson.categoryIcon)}
                 alt=""
                 className="size-6"
               />
@@ -160,7 +159,11 @@ export function LessonCard({
       </div>
 
       {/* Full level bar — joined to the image (flat top, rounded bottom). */}
-      <LessonLevelBadge level={lesson.level} className="rounded-b-lg" />
+      <LessonLevelBadge
+        level={lesson.level}
+        meta={lesson.levelMeta}
+        className="rounded-b-lg"
+      />
 
       <h3 className="mt-3 line-clamp-2 min-h-[2.6em] font-heading text-sm font-bold uppercase leading-snug text-ink">
         {lesson.title}
@@ -178,7 +181,7 @@ export function LessonCard({
       </div>
 
       <Link
-        to={to ?? lessonPath(lesson.id)}
+        to={to ?? lessonPath(lesson.slug)}
         className={buttonVariants('secondary', 'sm', 'mt-4 w-full')}
       >
         Go to lesson

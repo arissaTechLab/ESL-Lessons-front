@@ -1,20 +1,9 @@
 import type { ReactNode } from 'react'
 import { Placeholder } from '@/shared/components'
-import { LEVEL_META } from '../data/levels'
-import { formatLessonDate } from '../data/lessons'
-import type { Lesson } from '../types/lesson.types'
+import { resolveLevelMeta } from '../data/levels'
+import { formatLessonDate } from '../lib/format-lesson-date'
+import type { LessonDetail } from '../types/lesson.types'
 import { LessonLevelBadge } from './LessonLevelBadge'
-
-const OBJECTIVES: readonly string[] = [
-  'Discussion on the topic of wedding gifts and lottery winnings (warm up)',
-  'Vocabulary from the reading passage: introduction with controlled speaking practice of 7 words',
-  'Reading: leveled passage based on a news article, with reading comprehension questions',
-  'Listening: 2 1/2 minute news video on the same story, with listening comprehension questions',
-  'Discussion to reflect on the story and themes of family support and money',
-  'Vocabulary review: free speaking practice activity to review the 7 vocabulary words',
-  'Homework: research and present, or create and present',
-  'Answer keys to reading and listening comprehension questions',
-]
 
 function Tag({ children }: { children: ReactNode }) {
   return (
@@ -24,10 +13,20 @@ function Tag({ children }: { children: ReactNode }) {
   )
 }
 
-function ResourceLink({ icon, children }: { icon: ReactNode; children: ReactNode }) {
+function ResourceLink({
+  href,
+  icon,
+  children,
+}: {
+  href: string
+  icon: ReactNode
+  children: ReactNode
+}) {
   return (
     <a
-      href="#"
+      href={href}
+      target="_blank"
+      rel="noreferrer"
       className="flex items-center gap-2 text-sm text-ink transition hover:text-brand-600"
     >
       {icon}
@@ -55,7 +54,7 @@ function LinkIcon() {
 }
 
 interface LessonDetailContentProps {
-  lesson: Lesson
+  lesson: LessonDetail
   /** CTA / action area under the resources (e.g. login or download buttons). */
   actions?: ReactNode
 }
@@ -63,10 +62,12 @@ interface LessonDetailContentProps {
 /**
  * The shared lesson detail body (overview + description). Reused by the public
  * detail page and the customer's material view — each supplies its own
- * `actions` and page chrome.
+ * `actions` and page chrome. While a paid lesson is locked for the viewer the
+ * API sends `resources: null`, so no resource links render — only `actions`.
  */
 export function LessonDetailContent({ lesson, actions }: LessonDetailContentProps) {
-  const meta = LEVEL_META[lesson.level]
+  const meta = resolveLevelMeta(lesson.level, lesson.levelMeta)
+  const resources = lesson.resources
 
   return (
     <div className="space-y-12">
@@ -83,13 +84,10 @@ export function LessonDetailContent({ lesson, actions }: LessonDetailContentProp
             <Tag>{lesson.topic}</Tag>
           </div>
 
-          <p className="mt-4 text-sm text-ink-soft">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            varius enim in eros elementum tristique.
-          </p>
+          <p className="mt-4 text-sm text-ink-soft">{lesson.description}</p>
 
           <div className="mt-5 max-w-xs">
-            <LessonLevelBadge level={lesson.level} />
+            <LessonLevelBadge level={lesson.level} meta={lesson.levelMeta} />
           </div>
 
           <p className="mt-5 flex items-center gap-2 text-sm text-ink">
@@ -110,86 +108,120 @@ export function LessonDetailContent({ lesson, actions }: LessonDetailContentProp
             {formatLessonDate(lesson.dateAdded)}
           </p>
 
-          <div className="mt-4 space-y-2">
-            <ResourceLink
-              icon={
-                <svg
-                  viewBox="0 0 24 24"
-                  className="size-4 text-amber-500"
-                  fill="currentColor"
-                  aria-hidden="true"
+          {resources && (
+            <div className="mt-4 space-y-2">
+              {resources.googleSlidesUrl && (
+                <ResourceLink
+                  href={resources.googleSlidesUrl}
+                  icon={
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="size-4 text-amber-500"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm3 10h6v6H9v-6Z" />
+                    </svg>
+                  }
                 >
-                  <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm3 10h6v6H9v-6Z" />
-                </svg>
-              }
-            >
-              Google Slides Lesson
-            </ResourceLink>
-            <ResourceLink
-              icon={
-                <svg
-                  viewBox="0 0 24 24"
-                  className="size-4 text-rose-500"
-                  fill="currentColor"
-                  aria-hidden="true"
+                  Google Slides Lesson
+                </ResourceLink>
+              )}
+              {resources.pdfPlanUrl && (
+                <ResourceLink
+                  href={resources.pdfPlanUrl}
+                  icon={
+                    <svg
+                      viewBox="0 0 24 24"
+                      className="size-4 text-rose-500"
+                      fill="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm1 12h2.2a1.6 1.6 0 0 0 0-3.2H7V18Zm0-4.6h1.9a.4.4 0 0 0 0-.8H7v.8Z" />
+                    </svg>
+                  }
                 >
-                  <path d="M6 2h9l5 5v13a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm1 12h2.2a1.6 1.6 0 0 0 0-3.2H7V18Zm0-4.6h1.9a.4.4 0 0 0 0-.8H7v.8Z" />
-                </svg>
-              }
-            >
-              Lesson Plan &amp; Method
-            </ResourceLink>
-          </div>
+                  Lesson Plan &amp; Method
+                </ResourceLink>
+              )}
+            </div>
+          )}
 
           {actions}
         </div>
 
         <div>
-          <Placeholder
-            label="Lesson preview"
-            className="aspect-[4/3] w-full bg-neutral-200"
-          />
-          <div className="mt-4 space-y-2">
-            <p className="flex items-center gap-2 text-sm text-ink-soft">
-              <LinkIcon />
-              <span className="font-semibold text-ink">Youtube video:</span>{' '}
-              here goes the link
-            </p>
-            <p className="flex items-center gap-2 text-sm text-ink-soft">
-              <LinkIcon />
-              <span className="font-semibold text-ink">Spotify link:</span>{' '}
-              here goes the link
-            </p>
-          </div>
+          {lesson.previewUrl ? (
+            <img
+              src={lesson.previewUrl}
+              alt="Lesson preview"
+              className="aspect-[4/3] w-full bg-neutral-200 object-cover"
+            />
+          ) : (
+            <Placeholder
+              label="Lesson preview"
+              className="aspect-[4/3] w-full bg-neutral-200"
+            />
+          )}
+          {(resources?.videoUrl || resources?.spotifyUrl) && (
+            <div className="mt-4 space-y-2">
+              {resources.videoUrl && (
+                <p className="flex items-center gap-2 text-sm text-ink-soft">
+                  <LinkIcon />
+                  <span className="font-semibold text-ink">Youtube video:</span>{' '}
+                  <a
+                    href={resources.videoUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="truncate transition hover:text-brand-600"
+                  >
+                    {resources.videoUrl}
+                  </a>
+                </p>
+              )}
+              {resources.spotifyUrl && (
+                <p className="flex items-center gap-2 text-sm text-ink-soft">
+                  <LinkIcon />
+                  <span className="font-semibold text-ink">Spotify link:</span>{' '}
+                  <a
+                    href={resources.spotifyUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="truncate transition hover:text-brand-600"
+                  >
+                    {resources.spotifyUrl}
+                  </a>
+                </p>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       {/* Description */}
       <div className="grid gap-10 lg:grid-cols-2 lg:items-start">
-        <Placeholder
-          label="Lesson image"
-          className="aspect-[4/3] w-full bg-neutral-200"
-        />
+        {lesson.image ? (
+          <img
+            src={lesson.image}
+            alt="Lesson image"
+            className="aspect-[4/3] w-full bg-neutral-200 object-cover"
+          />
+        ) : (
+          <Placeholder
+            label="Lesson image"
+            className="aspect-[4/3] w-full bg-neutral-200"
+          />
+        )}
         <div>
           <h2 className="font-heading text-lg font-bold text-ink">
             ESL Lesson Description
           </h2>
-          <p className="mt-1 text-sm text-ink-soft">
-            Second Conditional Role-play &amp; Discussion
-          </p>
+          <p className="mt-1 text-sm text-ink-soft">{lesson.summary}</p>
 
           <h3 className="mt-6 font-heading text-lg font-bold text-ink">
             Objective &amp; Overview
           </h3>
-          <p className="mt-2 text-sm text-ink-soft">
-            This is a B2/C1 level lesson based on a new article about a lottery
-            wedding gift. It includes:
-          </p>
-          <ul className="mt-3 list-disc space-y-1.5 pl-5 text-sm text-ink-soft marker:text-brand-500">
-            {OBJECTIVES.map((objective) => (
-              <li key={objective}>{objective}</li>
-            ))}
-          </ul>
+          <p className="mt-2 text-sm text-ink-soft">{lesson.objectives}</p>
         </div>
       </div>
     </div>

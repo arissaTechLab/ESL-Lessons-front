@@ -1,6 +1,8 @@
 import { MultiSelectDropdown, SortDropdown } from '@/shared/components'
+import { useAsync } from '@/hooks'
+import { lessonsService } from '@/features/lessons/services/lessons.service'
+import type { LessonFilters as LessonQuery } from '../types/lesson.types'
 import { CEFR_LEVELS, FREE_LESSONS_TOPIC } from '../data/filters'
-import { useTaxonomyStore } from '../store/taxonomy.store'
 import { SeriesIcon } from './LessonCard'
 
 export interface LessonFiltersState {
@@ -17,6 +19,29 @@ const SORT_OPTIONS = [
   { value: 'title', label: 'Title A–Z' },
 ] as const
 
+/** UI sort values → the API's sort keys. */
+const SORT_TO_API: Record<string, LessonQuery['sort']> = {
+  recent: 'newest',
+  oldest: 'oldest',
+  title: 'title-asc',
+}
+
+/**
+ * Translate the filter bar's state into the catalogue query. The "Free
+ * Lessons" pseudo-topic becomes `access=free` — it is not a real topic.
+ */
+export function toLessonQuery(filters: LessonFiltersState): LessonQuery {
+  const topics = filters.topics.filter((topic) => topic !== FREE_LESSONS_TOPIC)
+  return {
+    q: filters.search.trim() || undefined,
+    levels: filters.levels.length > 0 ? filters.levels : undefined,
+    categories: filters.categories.length > 0 ? filters.categories : undefined,
+    topics: topics.length > 0 ? topics : undefined,
+    access: filters.topics.includes(FREE_LESSONS_TOPIC) ? 'free' : undefined,
+    sort: SORT_TO_API[filters.sort] ?? 'newest',
+  }
+}
+
 interface LessonFiltersProps {
   filters: LessonFiltersState
   onChange: (patch: Partial<LessonFiltersState>) => void
@@ -32,14 +57,20 @@ export function LessonFilters({
   showCategoryFilter = true,
 }: LessonFiltersProps) {
   // Category/topic options come from the managed taxonomy so newly added
-  // ones show up in the public filters too.
-  const categories = useTaxonomyStore((s) => s.categories)
-  const topics = useTaxonomyStore((s) => s.topics)
-  const categoryOptions = categories.map((c) => ({ value: c, label: c }))
-  const topicOptions = [FREE_LESSONS_TOPIC, ...topics].map((t) => ({
-    value: t,
-    label: t,
+  // ones show up in the public filters too. Values are slugs — what the
+  // catalogue endpoint filters on.
+  const taxonomy = useAsync((signal) => lessonsService.taxonomy(signal))
+  const categoryOptions = (taxonomy.data?.categories ?? []).map((c) => ({
+    value: c.slug,
+    label: c.name,
   }))
+  const topicOptions = [
+    { value: FREE_LESSONS_TOPIC, label: FREE_LESSONS_TOPIC },
+    ...(taxonomy.data?.topics ?? []).map((t) => ({
+      value: t.slug,
+      label: t.name,
+    })),
+  ]
 
   return (
     <div>

@@ -1,8 +1,10 @@
-import { LEVEL_META } from '../data/levels'
-import type { LessonLevel } from '../types/lesson.types'
+import { resolveLevelMeta } from '../data/levels'
+import type { LessonLevel, LessonLevelMeta } from '../types/lesson.types'
 
 interface LessonLevelBadgeProps {
   level: LessonLevel
+  /** Styling from the API; omit to fall back to the seeded palette. */
+  meta?: LessonLevelMeta
   /** Compact chip (just the CEFR tags) — e.g. for tables. */
   compact?: boolean
   /** Colored bar with only the CEFR tag chips (no level label). */
@@ -20,11 +22,12 @@ interface LessonLevelBadgeProps {
  */
 export function LessonLevelBadge({
   level,
+  meta: metaProp,
   compact = false,
   tagsOnly = false,
   className = 'rounded-md',
 }: LessonLevelBadgeProps) {
-  const meta = LEVEL_META[level]
+  const meta = resolveLevelMeta(level, metaProp)
 
   if (tagsOnly) {
     return (

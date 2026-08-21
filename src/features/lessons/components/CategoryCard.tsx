@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { buttonVariants } from '@/shared/components'
 import { lessonCategoryPath } from '@/config/routes.constants'
-import type { LessonCategory } from '../data/categories'
+import type { LessonCategory } from '../types/lesson.types'
 
 /** Category card for the "All lessons: categories" section. */
 export function CategoryCard({ category }: { category: LessonCategory }) {
@@ -29,7 +29,7 @@ export function CategoryCard({ category }: { category: LessonCategory }) {
           {category.levels}
         </p>
         <Link
-          to={lessonCategoryPath(category.id)}
+          to={lessonCategoryPath(category.slug)}
           className={buttonVariants('secondary', 'md', 'mt-3 w-full')}
         >
           Explore lessons

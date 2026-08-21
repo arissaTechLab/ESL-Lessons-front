@@ -1,33 +1,9 @@
 import { Link } from 'react-router-dom'
 import { APP_ROUTES } from '@/config/routes.constants'
-
-interface Comment {
-  id: string
-  name: string
-  time: string
-  text: string
-}
-
-const COMMENTS: readonly Comment[] = [
-  {
-    id: 'leonardo',
-    name: 'Leonardo Da Vinci',
-    time: 'Today',
-    text: 'Loved the course. I’ve learned some very subtle tecniques, expecially on leaves.',
-  },
-  {
-    id: 'titania',
-    name: 'Titania S',
-    time: 'Today',
-    text: 'I loved the course, it had been a long time since I had experimented with watercolors and now I will do it more often thanks to Kitani Studio',
-  },
-  {
-    id: 'zhirkov',
-    name: 'Zhirkov',
-    time: 'Today',
-    text: 'Yes. I just emphasize that the use of Photoshop, for non-users, becomes difficult to follow. What requires a course to master it. Safe and very didactic teacher.',
-  },
-]
+import { AsyncSection } from '@/shared/components'
+import { useAsync } from '@/hooks'
+import { lessonsService } from '@/features/lessons/services/lessons.service'
+import { formatLessonDate } from '../lib/format-lesson-date'
 
 function Avatar() {
   return (
@@ -51,7 +27,12 @@ function Avatar() {
   )
 }
 
-export function CommentsSection() {
+export function CommentsSection({ slug }: { slug: string }) {
+  const state = useAsync(
+    (signal) => lessonsService.comments(slug, 1, signal),
+    [slug],
+  )
+
   return (
     <section className="mx-auto max-w-6xl px-4 py-4 sm:px-6">
       <h2 className="font-heading text-lg font-bold text-ink">Comments</h2>
@@ -66,22 +47,33 @@ export function CommentsSection() {
         and let us know.
       </p>
 
-      <ul className="mt-6 space-y-5">
-        {COMMENTS.map((comment) => (
-          <li key={comment.id} className="flex gap-3">
-            <Avatar />
-            <div>
-              <div className="flex items-baseline gap-2">
-                <p className="text-sm font-semibold text-accent-700">
-                  {comment.name}
-                </p>
-                <span className="text-xs text-ink-muted">{comment.time}</span>
-              </div>
-              <p className="mt-1 text-sm text-ink-soft">{comment.text}</p>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <AsyncSection
+        state={state}
+        skeleton={<></>}
+        empty={<></>}
+        isEmpty={(page) => page.items.length === 0}
+      >
+        {(page) => (
+          <ul className="mt-6 space-y-5">
+            {page.items.map((comment) => (
+              <li key={comment.id} className="flex gap-3">
+                <Avatar />
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-sm font-semibold text-accent-700">
+                      {comment.author.fullName}
+                    </p>
+                    <span className="text-xs text-ink-muted">
+                      {formatLessonDate(comment.createdAt.slice(0, 10))}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-ink-soft">{comment.body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
+      </AsyncSection>
     </section>
   )
 }
