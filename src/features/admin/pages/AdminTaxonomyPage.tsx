@@ -1,15 +1,22 @@
 import { useState } from 'react'
+import { ApiError } from '@/service'
+import { useAsync } from '@/hooks'
+import { AsyncSection } from '@/shared/components'
 import { AdminPageHeader, ConfirmModal, Toast } from '@/features/admin/components'
-import { CEFR_LEVELS, useTaxonomyStore } from '@/features/lessons'
+import { CEFR_LEVELS } from '@/features/lessons'
+import { adminService } from '@/features/admin/services/admin.service'
 
 const NEW_LEVEL_TEXT = '#27170c'
 const DEFAULT_LEVEL_COLOR = '#e9e0f6'
 
 /** What the confirm dialog is about to delete. */
-type Pending =
-  | { kind: 'category'; value: string; label: string }
-  | { kind: 'topic'; value: string; label: string }
-  | { kind: 'level'; value: string; label: string }
+type Pending = {
+  kind: 'category' | 'topic' | 'level'
+  id: string
+  label: string
+  /** Set after a 409: the API's in-use message; confirming retries with force. */
+  inUseMessage?: string
+}
 
 function TrashButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
@@ -108,15 +115,10 @@ function StringRow({
 }
 
 export function AdminTaxonomyPage() {
-  const categories = useTaxonomyStore((s) => s.categories)
-  const topics = useTaxonomyStore((s) => s.topics)
-  const levels = useTaxonomyStore((s) => s.levels)
-  const addCategory = useTaxonomyStore((s) => s.addCategory)
-  const removeCategory = useTaxonomyStore((s) => s.removeCategory)
-  const addTopic = useTaxonomyStore((s) => s.addTopic)
-  const removeTopic = useTaxonomyStore((s) => s.removeTopic)
-  const addLevel = useTaxonomyStore((s) => s.addLevel)
-  const removeLevel = useTaxonomyStore((s) => s.removeLevel)
+  // Bumped after every mutation to refetch the lists.
+  const [version, setVersion] = useState(0)
+  const state = useAsync((signal) => adminService.taxonomy(signal), [version])
+  const refresh = () => setVersion((v) => v + 1)
 
   const [pending, setPending] = useState<Pending | null>(null)
   const [toast, setToast] = useState<string | null>(null)
@@ -131,13 +133,46 @@ export function AdminTaxonomyPage() {
     window.setTimeout(() => setToast(null), 2500)
   }
 
+  const failMessage = (cause: unknown, fallback: string) =>
+    cause instanceof ApiError ? cause.message : fallback
+
+  const create = (request: Promise<unknown>, done: string) => {
+    request
+      .then(() => {
+        refresh()
+        flash(done)
+      })
+      .catch((cause: unknown) => flash(failMessage(cause, 'Could not save.')))
+  }
+
   const confirmDelete = () => {
     if (!pending) return
-    if (pending.kind === 'category') removeCategory(pending.value)
-    if (pending.kind === 'topic') removeTopic(pending.value)
-    if (pending.kind === 'level') removeLevel(pending.value)
-    flash(`“${pending.label}” deleted.`)
+    const target = pending
     setPending(null)
+
+    const force = Boolean(target.inUseMessage)
+    const remove =
+      target.kind === 'category'
+        ? adminService.deleteCategory(target.id, force)
+        : target.kind === 'topic'
+          ? adminService.deleteTopic(target.id, force)
+          : adminService.deleteLevel(target.id, force)
+
+    remove
+      .then(() => {
+        refresh()
+        flash(`“${target.label}” deleted.`)
+      })
+      .catch((cause: unknown) => {
+        // Still referenced by lessons → surface the count and offer force.
+        if (cause instanceof ApiError && cause.status === 409) {
+          // Drop the API's "?force=true" instruction — the modal offers it.
+          const inUse = cause.message.split('Repeat the request')[0]?.trim()
+          setPending({ ...target, inUseMessage: inUse || cause.message })
+        } else {
+          flash(failMessage(cause, 'Could not delete.'))
+        }
+      })
   }
 
   const toggleTag = (tag: string) =>
@@ -152,11 +187,23 @@ export function AdminTaxonomyPage() {
     const ordered = CEFR_LEVELS.map((c) => c.value).filter((v) =>
       levelTags.includes(v),
     )
-    addLevel({ label, tags: ordered, bg: levelColor, text: NEW_LEVEL_TEXT })
-    setLevelLabel('')
-    setLevelTags([])
-    setLevelColor(DEFAULT_LEVEL_COLOR)
-    flash('Level added.')
+    adminService
+      .createLevel({
+        name: label,
+        cefr: ordered,
+        color: levelColor,
+        textColor: NEW_LEVEL_TEXT,
+      })
+      .then(() => {
+        setLevelLabel('')
+        setLevelTags([])
+        setLevelColor(DEFAULT_LEVEL_COLOR)
+        refresh()
+        flash('Level added.')
+      })
+      .catch((cause: unknown) =>
+        flash(failMessage(cause, 'Could not add the level.')),
+      )
   }
 
   return (
@@ -166,177 +213,197 @@ export function AdminTaxonomyPage() {
         description="Manage the categories, levels and topics available when creating lessons."
       />
 
-      <div className="grid gap-6 lg:grid-cols-2">
-        {/* Categories */}
-        <Panel
-          title="Categories"
-          description="The lesson types offered on the platform."
-        >
-          <div className="space-y-2">
-            {categories.map((category) => (
-              <StringRow
-                key={category}
-                label={category}
-                onDelete={() =>
-                  setPending({
-                    kind: 'category',
-                    value: category,
-                    label: category,
-                  })
-                }
-              />
-            ))}
-          </div>
-          <div className="mt-3">
-            <AddRow
-              placeholder="New category name"
-              onAdd={(v) => {
-                addCategory(v)
-                flash('Category added.')
-              }}
-            />
-          </div>
-        </Panel>
-
-        {/* Topics */}
-        <Panel
-          title="Topics"
-          description="Themes a lesson can be tagged with."
-        >
-          <div className="space-y-2">
-            {topics.map((topic) => (
-              <StringRow
-                key={topic}
-                label={topic}
-                onDelete={() =>
-                  setPending({ kind: 'topic', value: topic, label: topic })
-                }
-              />
-            ))}
-          </div>
-          <div className="mt-3">
-            <AddRow
-              placeholder="New topic name"
-              onAdd={(v) => {
-                addTopic(v)
-                flash('Topic added.')
-              }}
-            />
-          </div>
-        </Panel>
-
-        {/* Levels */}
-        <Panel
-          title="Levels"
-          description="Each level carries its CEFR tags and badge color."
-        >
-          <div className="space-y-2">
-            {levels.map((level) => (
-              <div
-                key={level.id}
-                className="flex items-center gap-3 rounded-lg border border-ink/10 bg-white px-3 py-2"
-              >
-                <span
-                  className="grid size-8 shrink-0 place-items-center rounded text-[10px] font-bold"
-                  style={{ backgroundColor: level.bg, color: level.text }}
-                  title={level.label}
-                >
-                  {level.tags.join('/')}
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-semibold text-ink">
-                    {level.label}
-                  </p>
-                  <p className="text-xs text-ink-muted">
-                    {level.tags.join(' · ')}
-                  </p>
-                </div>
-                <TrashButton
-                  label={`Delete ${level.label}`}
-                  onClick={() =>
-                    setPending({
-                      kind: 'level',
-                      value: level.id,
-                      label: level.label,
-                    })
+      <AsyncSection state={state} isEmpty={() => false}>
+        {({ categories, topics, levels }) => (
+          <div className="grid gap-6 lg:grid-cols-2">
+            {/* Categories */}
+            <Panel
+              title="Categories"
+              description="The lesson types offered on the platform."
+            >
+              <div className="space-y-2">
+                {categories.map((category) => (
+                  <StringRow
+                    key={category.id}
+                    label={category.name}
+                    onDelete={() =>
+                      setPending({
+                        kind: 'category',
+                        id: category.id,
+                        label: category.name,
+                      })
+                    }
+                  />
+                ))}
+              </div>
+              <div className="mt-3">
+                <AddRow
+                  placeholder="New category name"
+                  onAdd={(v) =>
+                    create(
+                      adminService.createCategory({ name: v }),
+                      'Category added.',
+                    )
                   }
                 />
               </div>
-            ))}
-          </div>
+            </Panel>
 
-          {/* New level form */}
-          <div className="mt-4 space-y-3 rounded-lg border border-dashed border-ink/20 bg-white p-4">
-            <p className="text-sm font-semibold text-ink">Add a level</p>
-            <input
-              value={levelLabel}
-              onChange={(e) => setLevelLabel(e.target.value)}
-              placeholder="Level name (e.g. Advanced)"
-              className="w-full rounded-lg border border-ink/15 bg-white px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-            />
-            <div>
-              <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-ink-muted">
-                CEFR tags
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {CEFR_LEVELS.map((cefr) => {
-                  const on = levelTags.includes(cefr.value)
-                  return (
-                    <button
-                      key={cefr.value}
-                      type="button"
-                      onClick={() => toggleTag(cefr.value)}
-                      className={`rounded-full border px-3 py-1 text-sm font-medium transition ${
-                        on
-                          ? 'border-brand-500 bg-brand-50 text-brand-700'
-                          : 'border-ink/15 text-ink-soft hover:border-ink/30'
-                      }`}
-                    >
-                      {cefr.value}
-                    </button>
-                  )
-                })}
+            {/* Topics */}
+            <Panel
+              title="Topics"
+              description="Themes a lesson can be tagged with."
+            >
+              <div className="space-y-2">
+                {topics.map((topic) => (
+                  <StringRow
+                    key={topic.id}
+                    label={topic.name}
+                    onDelete={() =>
+                      setPending({
+                        kind: 'topic',
+                        id: topic.id,
+                        label: topic.name,
+                      })
+                    }
+                  />
+                ))}
               </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <label className="flex items-center gap-2 text-sm text-ink-soft">
-                Badge color
-                <input
-                  type="color"
-                  value={levelColor}
-                  onChange={(e) => setLevelColor(e.target.value)}
-                  className="h-8 w-12 cursor-pointer rounded border border-ink/15 bg-white"
-                  aria-label="Badge color"
+              <div className="mt-3">
+                <AddRow
+                  placeholder="New topic name"
+                  onAdd={(v) =>
+                    create(adminService.createTopic({ name: v }), 'Topic added.')
+                  }
                 />
-              </label>
-              <span
-                className="grid size-8 place-items-center rounded text-[10px] font-bold"
-                style={{ backgroundColor: levelColor, color: NEW_LEVEL_TEXT }}
-              >
-                {levelTags.length ? levelTags.join('/') : 'Aa'}
-              </span>
-              <button
-                type="button"
-                onClick={submitLevel}
-                disabled={!levelLabel.trim() || levelTags.length === 0}
-                className="ml-auto rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-40"
-              >
-                Add level
-              </button>
-            </div>
+              </div>
+            </Panel>
+
+            {/* Levels */}
+            <Panel
+              title="Levels"
+              description="Each level carries its CEFR tags and badge color."
+            >
+              <div className="space-y-2">
+                {levels.map((level) => (
+                  <div
+                    key={level.id}
+                    className="flex items-center gap-3 rounded-lg border border-ink/10 bg-white px-3 py-2"
+                  >
+                    <span
+                      className="grid size-8 shrink-0 place-items-center rounded text-[10px] font-bold"
+                      style={{
+                        backgroundColor: level.color,
+                        color: level.textColor,
+                      }}
+                      title={level.name}
+                    >
+                      {level.cefr.join('/')}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-ink">
+                        {level.name}
+                      </p>
+                      <p className="text-xs text-ink-muted">
+                        {level.cefr.join(' · ')}
+                      </p>
+                    </div>
+                    <TrashButton
+                      label={`Delete ${level.name}`}
+                      onClick={() =>
+                        setPending({
+                          kind: 'level',
+                          id: level.id,
+                          label: level.name,
+                        })
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* New level form */}
+              <div className="mt-4 space-y-3 rounded-lg border border-dashed border-ink/20 bg-white p-4">
+                <p className="text-sm font-semibold text-ink">Add a level</p>
+                <input
+                  value={levelLabel}
+                  onChange={(e) => setLevelLabel(e.target.value)}
+                  placeholder="Level name (e.g. Advanced)"
+                  className="w-full rounded-lg border border-ink/15 bg-white px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+                />
+                <div>
+                  <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-ink-muted">
+                    CEFR tags
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {CEFR_LEVELS.map((cefr) => {
+                      const on = levelTags.includes(cefr.value)
+                      return (
+                        <button
+                          key={cefr.value}
+                          type="button"
+                          onClick={() => toggleTag(cefr.value)}
+                          className={`rounded-full border px-3 py-1 text-sm font-medium transition ${
+                            on
+                              ? 'border-brand-500 bg-brand-50 text-brand-700'
+                              : 'border-ink/15 text-ink-soft hover:border-ink/30'
+                          }`}
+                        >
+                          {cefr.value}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <label className="flex items-center gap-2 text-sm text-ink-soft">
+                    Badge color
+                    <input
+                      type="color"
+                      value={levelColor}
+                      onChange={(e) => setLevelColor(e.target.value)}
+                      className="h-8 w-12 cursor-pointer rounded border border-ink/15 bg-white"
+                      aria-label="Badge color"
+                    />
+                  </label>
+                  <span
+                    className="grid size-8 place-items-center rounded text-[10px] font-bold"
+                    style={{ backgroundColor: levelColor, color: NEW_LEVEL_TEXT }}
+                  >
+                    {levelTags.length ? levelTags.join('/') : 'Aa'}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={submitLevel}
+                    disabled={!levelLabel.trim() || levelTags.length === 0}
+                    className="ml-auto rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    Add level
+                  </button>
+                </div>
+              </div>
+            </Panel>
           </div>
-        </Panel>
-      </div>
+        )}
+      </AsyncSection>
 
       <ConfirmModal
         open={pending !== null}
         title={`Delete ${pending?.kind ?? ''}`}
         message={
-          <>
-            Delete <strong>“{pending?.label}”</strong>? It won’t be selectable
-            for new lessons. Existing lessons keep their current value.
-          </>
+          pending?.inUseMessage ? (
+            <>
+              {pending.inUseMessage} Delete <strong>“{pending.label}”</strong>{' '}
+              anyway?
+            </>
+          ) : (
+            <>
+              Delete <strong>“{pending?.label}”</strong>? It won’t be selectable
+              for new lessons. Existing lessons keep their current value.
+            </>
+          )
         }
+        confirmLabel={pending?.inUseMessage ? 'Delete anyway' : 'Delete'}
         onConfirm={confirmDelete}
         onCancel={() => setPending(null)}
       />

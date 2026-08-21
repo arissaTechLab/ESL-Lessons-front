@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react'
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom'
-import { buttonVariants } from '@/shared/components'
+import { Link, useNavigate, useParams } from 'react-router-dom'
+import { useAsync } from '@/hooks'
+import { AsyncSection, buttonVariants } from '@/shared/components'
 import { APP_ROUTES } from '@/config/routes.constants'
 import {
   AdminPageHeader,
@@ -9,30 +10,128 @@ import {
   AdminFileUpload,
   StatusField,
 } from '@/features/admin/components'
-import { getPostById, type BlogStatus } from '@/features/blog'
+import type { BlogStatus } from '@/features/blog'
+import {
+  adminReportsService,
+  type AdminArticle,
+} from '@/features/admin/services/admin-reports.service'
 
-export function AdminBlogFormPage() {
+function BlogForm({ editing }: { editing: AdminArticle | null }) {
   const navigate = useNavigate()
-  const { id } = useParams()
-  const editing = id ? getPostById(id) : undefined
-  const isEdit = Boolean(id)
+  const isEdit = editing !== null
 
   const [status, setStatus] = useState<BlogStatus>(editing?.status ?? 'draft')
+  const [isSaving, setIsSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  if (isEdit && !editing) {
-    return <Navigate to={APP_ROUTES.ADMIN_BLOG} replace />
-  }
-
-  // Mocked — persisting comes with the backend.
-  const handleSubmit = (event: FormEvent) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    const toast = isEdit
-      ? 'Post updated.'
-      : status === 'published'
-        ? 'Post published.'
-        : 'Post saved as draft.'
-    navigate(APP_ROUTES.ADMIN_BLOG, { state: { toast } })
+    if (isSaving) return
+
+    const form = new FormData(event.currentTarget)
+    const title = String(form.get('title') ?? '').trim()
+    const content = String(form.get('text') ?? '').trim()
+    const image = form.get('image')
+
+    setIsSaving(true)
+    setError(null)
+    try {
+      let imageUrl: string | undefined
+      if (image instanceof File && image.size > 0) {
+        imageUrl = (await adminReportsService.uploadImage(image)).url
+      }
+
+      const input = { title, content, status, imageUrl }
+      if (isEdit) {
+        await adminReportsService.updateArticle(editing.id, input)
+      } else {
+        await adminReportsService.createArticle(input)
+      }
+
+      const toast = isEdit
+        ? 'Post updated.'
+        : status === 'published'
+          ? 'Post published.'
+          : 'Post saved as draft.'
+      navigate(APP_ROUTES.ADMIN_BLOG, { state: { toast } })
+    } catch (cause) {
+      setError(
+        cause instanceof Error
+          ? cause.message
+          : 'Something went wrong. Please try again.',
+      )
+      setIsSaving(false)
+    }
   }
+
+  return (
+    <form
+      key={editing?.id ?? 'new'}
+      onSubmit={handleSubmit}
+      className="max-w-3xl space-y-6"
+    >
+      <div className="space-y-5 rounded-xl border border-ink/10 bg-white/60 p-6">
+        <StatusField value={status} onChange={setStatus} />
+
+        <AdminInput
+          label="Title"
+          name="title"
+          placeholder="Post title"
+          defaultValue={editing?.title}
+          required
+        />
+
+        <AdminTextarea
+          label="Text"
+          name="text"
+          placeholder="Write the post content…"
+          defaultValue={editing?.content}
+          required
+        />
+
+        <AdminFileUpload
+          label="Image"
+          name="image"
+          accept="image/*"
+          hint="Click to upload an image"
+          initialFileName={editing?.imageUrl?.split('/').pop() ?? null}
+        />
+      </div>
+
+      {error && (
+        <p role="alert" className="text-sm font-medium text-rose-600">
+          {error}
+        </p>
+      )}
+
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="submit"
+          disabled={isSaving}
+          className={buttonVariants('primary', 'md')}
+        >
+          {isEdit ? 'Update post' : 'Save post'}
+        </button>
+        <Link
+          to={APP_ROUTES.ADMIN_BLOG}
+          className={buttonVariants('tertiary', 'md')}
+        >
+          Cancel
+        </Link>
+      </div>
+    </form>
+  )
+}
+
+export function AdminBlogFormPage() {
+  const { id } = useParams()
+  const isEdit = Boolean(id)
+
+  const state = useAsync(
+    (signal) =>
+      id ? adminReportsService.article(id, signal) : Promise.resolve(null),
+    [id],
+  )
 
   return (
     <>
@@ -53,49 +152,13 @@ export function AdminBlogFormPage() {
         }
       />
 
-      <form
-        key={editing?.id ?? 'new'}
-        onSubmit={handleSubmit}
-        className="max-w-3xl space-y-6"
-      >
-        <div className="space-y-5 rounded-xl border border-ink/10 bg-white/60 p-6">
-          <StatusField value={status} onChange={setStatus} />
-
-          <AdminInput
-            label="Title"
-            name="title"
-            placeholder="Post title"
-            defaultValue={editing?.title}
-            required
-          />
-
-          <AdminTextarea
-            label="Text"
-            name="text"
-            placeholder="Write the post content…"
-            defaultValue={editing?.text}
-            required
-          />
-
-          <AdminFileUpload
-            label="Image"
-            accept="image/*"
-            hint="Click to upload an image"
-          />
-        </div>
-
-        <div className="flex flex-wrap gap-3">
-          <button type="submit" className={buttonVariants('primary', 'md')}>
-            {isEdit ? 'Update post' : 'Save post'}
-          </button>
-          <Link
-            to={APP_ROUTES.ADMIN_BLOG}
-            className={buttonVariants('tertiary', 'md')}
-          >
-            Cancel
-          </Link>
-        </div>
-      </form>
+      {isEdit ? (
+        <AsyncSection state={state} isEmpty={() => false}>
+          {(editing) => <BlogForm editing={editing} />}
+        </AsyncSection>
+      ) : (
+        <BlogForm editing={null} />
+      )}
     </>
   )
 }

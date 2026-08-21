@@ -87,13 +87,19 @@ export function AdminFileUpload({
   label,
   accept,
   hint = 'Click to upload',
+  name,
+  initialFileName = null,
 }: {
   label: string
   accept?: string
   hint?: string
+  /** Form field name — makes the file readable via `FormData` on submit. */
+  name?: string
+  /** Name of the file already stored (edit mode). */
+  initialFileName?: string | null
 }) {
   const id = useId()
-  const [fileName, setFileName] = useState<string | null>(null)
+  const [fileName, setFileName] = useState<string | null>(initialFileName)
 
   return (
     <div>
@@ -118,6 +124,7 @@ export function AdminFileUpload({
         <span className="text-sm text-ink-soft">{fileName ?? hint}</span>
         <input
           id={id}
+          name={name}
           type="file"
           accept={accept}
           className="sr-only"

@@ -1,11 +1,16 @@
-import { useMemo, type ReactNode } from 'react'
+import type { ReactNode } from 'react'
+import { useAsync } from '@/hooks'
+import { AsyncSection } from '@/shared/components'
 import { AdminPageHeader } from '@/features/admin/components'
-import { CLIENTS } from '@/features/clients'
-import { TRANSACTIONS, formatMoney, getMonthlyRevenue } from '@/features/revenue'
 import {
-  DOWNLOADS_MONTHLY,
-  TOP_DOWNLOADED_LESSONS,
-} from '@/features/admin/data/dashboard'
+  adminService,
+  type AdminDashboard,
+} from '@/features/admin/services/admin.service'
+
+const MONEY = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+})
 
 function Icon({ children }: { children: ReactNode }) {
   return (
@@ -66,11 +71,12 @@ function pct(current: number, previous: number): number {
   return Math.round(((current - previous) / previous) * 100)
 }
 
-function DownloadsChart() {
-  const max = Math.max(
-    ...DOWNLOADS_MONTHLY.flatMap((m) => [m.slides, m.pdf]),
-    1,
-  )
+function DownloadsChart({
+  months,
+}: {
+  months: AdminDashboard['downloadsChart']
+}) {
+  const max = Math.max(...months.flatMap((m) => [m.slides, m.pdf]), 1)
   return (
     <div className="rounded-xl border border-ink/10 bg-white p-5 lg:col-span-2">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -89,7 +95,7 @@ function DownloadsChart() {
         </div>
       </div>
       <div className="mt-6 flex h-52 items-end gap-4">
-        {DOWNLOADS_MONTHLY.map((m) => (
+        {months.map((m) => (
           <div key={m.month} className="flex flex-1 flex-col items-center">
             <div className="flex w-full flex-1 items-end justify-center gap-1">
               <div
@@ -103,7 +109,7 @@ function DownloadsChart() {
                 title={`PDF: ${m.pdf}`}
               />
             </div>
-            <span className="mt-2 text-xs text-ink-muted">{m.month}</span>
+            <span className="mt-2 text-xs text-ink-muted">{m.label}</span>
           </div>
         ))}
       </div>
@@ -111,16 +117,20 @@ function DownloadsChart() {
   )
 }
 
-function TopLessonsPanel() {
-  const max = Math.max(...TOP_DOWNLOADED_LESSONS.map((l) => l.downloads), 1)
+function TopLessonsPanel({
+  lessons,
+}: {
+  lessons: AdminDashboard['topLessons']
+}) {
+  const max = Math.max(...lessons.map((l) => l.downloads), 1)
   return (
     <div className="rounded-xl border border-ink/10 bg-white p-5">
       <h2 className="font-heading text-sm font-semibold uppercase tracking-wide text-ink-muted">
         Most downloaded lessons
       </h2>
       <ul className="mt-4 space-y-3.5">
-        {TOP_DOWNLOADED_LESSONS.map((lesson) => (
-          <li key={lesson.title}>
+        {lessons.map((lesson) => (
+          <li key={lesson.id}>
             <div className="flex items-center justify-between gap-2 text-sm">
               <span className="truncate text-ink">{lesson.title}</span>
               <span className="shrink-0 font-semibold text-ink-soft">
@@ -140,43 +150,17 @@ function TopLessonsPanel() {
   )
 }
 
-export function AdminDashboardPage() {
-  const metrics = useMemo(() => {
-    const slidesTotal = DOWNLOADS_MONTHLY.reduce((s, m) => s + m.slides, 0)
-    const pdfTotal = DOWNLOADS_MONTHLY.reduce((s, m) => s + m.pdf, 0)
+function DashboardContent({ dashboard }: { dashboard: AdminDashboard }) {
+  const { metrics, downloadsChart, topLessons } = dashboard
 
-    const n = DOWNLOADS_MONTHLY.length
-    const cur = DOWNLOADS_MONTHLY[n - 1]
-    const prev = DOWNLOADS_MONTHLY[n - 2]
-    const slidesDelta = cur && prev ? pct(cur.slides, prev.slides) : 0
-    const pdfDelta = cur && prev ? pct(cur.pdf, prev.pdf) : 0
-
-    const revenueTotal = TRANSACTIONS.filter((t) => t.status === 'paid').reduce(
-      (s, t) => s + t.amount,
-      0,
-    )
-    const monthly = getMonthlyRevenue()
-    const revenueThisMonth = monthly[monthly.length - 1]?.total ?? 0
-
-    return {
-      slidesTotal,
-      pdfTotal,
-      slidesDelta,
-      pdfDelta,
-      revenueTotal,
-      revenueThisMonth,
-      activeSubs: CLIENTS.filter((c) => c.status === 'active').length,
-      totalClients: CLIENTS.length,
-    }
-  }, [])
+  const n = downloadsChart.length
+  const cur = downloadsChart[n - 1]
+  const prev = downloadsChart[n - 2]
+  const slidesDelta = cur && prev ? pct(cur.slides, prev.slides) : 0
+  const pdfDelta = cur && prev ? pct(cur.pdf, prev.pdf) : 0
 
   return (
     <>
-      <AdminPageHeader
-        title="Dashboard"
-        description="How your lessons and subscriptions are performing."
-      />
-
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard
           icon={
@@ -186,8 +170,8 @@ export function AdminDashboardPage() {
             </Icon>
           }
           label="Google Slides downloads"
-          value={metrics.slidesTotal.toLocaleString('en-US')}
-          delta={`+${metrics.slidesDelta}% vs last month`}
+          value={metrics.slidesDownloads.toLocaleString('en-US')}
+          delta={`+${slidesDelta}% vs last month`}
           direction="up"
         />
         <MetricCard
@@ -198,8 +182,8 @@ export function AdminDashboardPage() {
             </Icon>
           }
           label="PDF lesson plans downloaded"
-          value={metrics.pdfTotal.toLocaleString('en-US')}
-          delta={`+${metrics.pdfDelta}% vs last month`}
+          value={metrics.pdfDownloads.toLocaleString('en-US')}
+          delta={`+${pdfDelta}% vs last month`}
           direction="up"
         />
         <MetricCard
@@ -211,7 +195,7 @@ export function AdminDashboardPage() {
             </Icon>
           }
           label="Active subscriptions"
-          value={String(metrics.activeSubs)}
+          value={String(metrics.activeSubscriptions)}
           delta={`of ${metrics.totalClients} total clients`}
           direction="neutral"
         />
@@ -222,16 +206,33 @@ export function AdminDashboardPage() {
             </Icon>
           }
           label="Total revenue"
-          value={formatMoney(metrics.revenueTotal)}
-          delta={`+${formatMoney(metrics.revenueThisMonth)} this month`}
+          value={MONEY.format(metrics.totalRevenue)}
+          delta={`+${metrics.revenueGrowthThisMonth}% this month`}
           direction="up"
         />
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-3">
-        <DownloadsChart />
-        <TopLessonsPanel />
+        <DownloadsChart months={downloadsChart} />
+        <TopLessonsPanel lessons={topLessons} />
       </div>
+    </>
+  )
+}
+
+export function AdminDashboardPage() {
+  const state = useAsync((signal) => adminService.dashboard(signal), [])
+
+  return (
+    <>
+      <AdminPageHeader
+        title="Dashboard"
+        description="How your lessons and subscriptions are performing."
+      />
+
+      <AsyncSection state={state}>
+        {(dashboard) => <DashboardContent dashboard={dashboard} />}
+      </AsyncSection>
     </>
   )
 }
