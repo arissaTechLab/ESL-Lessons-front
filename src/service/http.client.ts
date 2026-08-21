@@ -6,9 +6,20 @@ import {
   setTokens,
 } from '@/service/token.storage'
 
-const BASE_URL = (
-  import.meta.env.VITE_API_URL ?? 'http://localhost:3000/api'
-).replace(/\/+$/, '')
+/**
+ * Where the API lives. `VITE_API_URL` wins when it is set, so any environment
+ * can point somewhere else without a code change. Without it we fall back to
+ * the local API while developing and to the shared test server once built —
+ * that way the Netlify deploy works with no environment variables configured.
+ */
+const DEFAULT_API_URL = import.meta.env.DEV
+  ? 'http://localhost:3000/api'
+  : 'https://esl.arissa.io/api'
+
+const BASE_URL = (import.meta.env.VITE_API_URL || DEFAULT_API_URL).replace(
+  /\/+$/,
+  '',
+)
 
 interface RequestOptions {
   /** Query string parameters. Arrays are repeated: `?levels=b1&levels=b2`. */
