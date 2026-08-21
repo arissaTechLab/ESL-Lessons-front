@@ -1,8 +1,3 @@
 // 📤 Public API of the `revenue` feature.
-export {
-  TRANSACTIONS,
-  formatMoney,
-  formatTransactionDate,
-  getMonthlyRevenue,
-} from './data/transactions'
+export { formatMoney, formatTransactionDate } from './utils/format'
 export type { Transaction, TransactionStatus } from './types/revenue.types'

@@ -1,5 +1,5 @@
 // 📤 Public API of the `clients` feature.
-export { CLIENTS, planLabel, formatClientDate } from './data/clients'
+export { planLabel, formatClientDate } from './utils/format'
 export type {
   Client,
   ClientStatus,

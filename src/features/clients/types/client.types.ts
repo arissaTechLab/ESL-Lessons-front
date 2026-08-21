@@ -1,4 +1,4 @@
-export type SubscriptionPlan = '6-month' | '12-month'
+export type SubscriptionPlan = '6-months' | '12-months'
 
 /**
  * active  → paid, subscription currently valid
@@ -12,10 +12,11 @@ export interface Client {
   // ── From sign up ──────────────────────────────────────────────
   firstName: string
   lastName: string
+  fullName: string
   email: string
   /** ISO date the account was created (sign up). */
   registeredAt: string
-  // ── From the client zone / payments (built later) ─────────────
+  // ── From the client zone / payments ───────────────────────────
   /** Current plan, or null if they never subscribed. */
   plan: SubscriptionPlan | null
   status: ClientStatus
