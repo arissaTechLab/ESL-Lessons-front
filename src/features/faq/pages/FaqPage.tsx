@@ -1,9 +1,12 @@
-import { PageHeader } from '@/shared/components'
+import { AsyncSection, PageHeader } from '@/shared/components'
+import { useAsync } from '@/hooks'
 import { CtaSection } from '@/features/landing'
 import { FaqAccordion } from '@/features/faq/components'
-import { FAQS } from '@/features/faq/data/faqs'
+import { faqService } from '@/features/faq/services/faq.service'
 
 export function FaqPage() {
+  const state = useAsync((signal) => faqService.list(signal))
+
   return (
     <>
       <PageHeader
@@ -13,7 +16,9 @@ export function FaqPage() {
 
       <section>
         <div className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
-          <FaqAccordion items={FAQS} />
+          <AsyncSection state={state}>
+            {(faqs) => <FaqAccordion items={faqs} />}
+          </AsyncSection>
         </div>
       </section>
 

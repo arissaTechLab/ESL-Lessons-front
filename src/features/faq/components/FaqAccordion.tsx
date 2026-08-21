@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import type { Faq } from '../data/faqs'
+import type { Faq } from '../types/faq.types'
 
 interface FaqAccordionProps {
   items: readonly Faq[]

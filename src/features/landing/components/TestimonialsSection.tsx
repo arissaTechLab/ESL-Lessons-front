@@ -1,39 +1,6 @@
-interface Testimonial {
-  quote: string
-  name: string
-  role: string
-  /** Profile photo — supplied later; falls back to an avatar placeholder. */
-  photo?: string
-  /** LinkedIn profile URL — replace the '#' placeholders with real links. */
-  linkedin: string
-}
-
-const TESTIMONIALS: readonly Testimonial[] = [
-  {
-    quote:
-      'These lessons are a dream. The amount of time it would take me to create something like this with pages of visuals and current podcast content- it’s an absolute life saver.',
-    name: 'Felisha Martin',
-    role: 'ESL Teacher and Academic Coach',
-    photo: '/Felisha.jpg',
-    linkedin: 'https://www.linkedin.com/in/felisha-martin-0311a930/',
-  },
-  {
-    quote:
-      'My speaking has improved so much with these lessons! Talking about all the GIFs and pictures makes it very natural and spontaneous. The walking review part is a great way to change the vibe.',
-    name: 'Luis Cervera',
-    role: 'English Language Learner',
-    photo: '/Luis.jpg',
-    linkedin: 'https://www.linkedin.com/in/luis-cervera-gil-1042b873/',
-  },
-  {
-    quote:
-      'When I started teaching English online, I didn’t want to work for an online school, but I wasn’t sure how to structure my lessons. With these lessons, I can confidently charge professional rates.',
-    name: 'Isaias Peraza',
-    role: 'Science Instructor & Freelance ESL Tutor',
-    photo: '/Isaias.png',
-    linkedin: 'https://www.linkedin.com/in/isaias-peraza-baeza-777b09371/',
-  },
-]
+import { useAsync } from '@/hooks'
+import { AsyncSection } from '@/shared/components'
+import { contentService } from '../services/content.service'
 
 function Avatar({ photo, name }: { photo?: string; name: string }) {
   if (photo) {
@@ -74,12 +41,28 @@ function LinkedInIcon() {
   )
 }
 
+function TestimonialsSkeleton() {
+  return (
+    <div className="mt-14 grid gap-8 md:grid-cols-3" aria-hidden="true">
+      {Array.from({ length: 3 }, (_, i) => (
+        <div key={i} className="flex flex-col items-center text-center">
+          <span className="size-20 animate-pulse rounded-full bg-accent-200" />
+          <span className="mt-5 h-24 w-full animate-pulse rounded-xl bg-accent-100" />
+          <span className="mt-5 h-4 w-32 animate-pulse rounded-md bg-accent-200" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
 export function TestimonialsSection({
   variant = 'default',
 }: {
   /** 'accent' shows the section on a green band (e.g. the pricing page). */
   variant?: 'default' | 'accent'
 }) {
+  const state = useAsync((signal) => contentService.testimonials(signal))
+
   return (
     <section
       id="testimonials"
@@ -92,40 +75,44 @@ export function TestimonialsSection({
           Students Say
         </h2>
 
-        <div className="mt-14 grid gap-8 md:grid-cols-3">
-          {TESTIMONIALS.map((testimonial) => (
-            <figure
-              key={testimonial.name}
-              className="flex flex-col items-center text-center"
-            >
-              <Avatar photo={testimonial.photo} name={testimonial.name} />
+        <AsyncSection state={state} skeleton={<TestimonialsSkeleton />}>
+          {(testimonials) => (
+            <div className="mt-14 grid gap-8 md:grid-cols-3">
+              {testimonials.map((testimonial) => (
+                <figure
+                  key={testimonial.id}
+                  className="flex flex-col items-center text-center"
+                >
+                  <Avatar photo={testimonial.photo} name={testimonial.name} />
 
-              <blockquote className="mt-5 text-sm text-ink-soft">
-                {testimonial.quote}
-              </blockquote>
+                  <blockquote className="mt-5 text-sm text-ink-soft">
+                    {testimonial.quote}
+                  </blockquote>
 
-              <figcaption className="mt-5">
-                <div className="flex items-center justify-center gap-2">
-                  <p className="font-heading font-semibold text-ink">
-                    {testimonial.name}
-                  </p>
-                  <a
-                    href={testimonial.linkedin}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    aria-label={`${testimonial.name} on LinkedIn`}
-                    className="grid size-6 place-items-center rounded-full bg-[#0A66C2] text-white transition hover:bg-[#004182]"
-                  >
-                    <LinkedInIcon />
-                  </a>
-                </div>
-                <p className="mt-0.5 text-xs text-ink-muted">
-                  {testimonial.role}
-                </p>
-              </figcaption>
-            </figure>
-          ))}
-        </div>
+                  <figcaption className="mt-5">
+                    <div className="flex items-center justify-center gap-2">
+                      <p className="font-heading font-semibold text-ink">
+                        {testimonial.name}
+                      </p>
+                      <a
+                        href={testimonial.linkedin}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${testimonial.name} on LinkedIn`}
+                        className="grid size-6 place-items-center rounded-full bg-[#0A66C2] text-white transition hover:bg-[#004182]"
+                      >
+                        <LinkedInIcon />
+                      </a>
+                    </div>
+                    <p className="mt-0.5 text-xs text-ink-muted">
+                      {testimonial.role}
+                    </p>
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          )}
+        </AsyncSection>
       </div>
     </section>
   )
