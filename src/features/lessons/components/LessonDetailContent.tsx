@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { Placeholder } from '@/shared/components'
 import { resolveLevelMeta } from '../data/levels'
+import { YouTubeEmbed, getYouTubeId } from './YouTubeEmbed'
 import { formatLessonDate } from '../lib/format-lesson-date'
 import type { LessonDetail } from '../types/lesson.types'
 import { LessonLevelBadge } from './LessonLevelBadge'
@@ -68,6 +69,8 @@ interface LessonDetailContentProps {
 export function LessonDetailContent({ lesson, actions }: LessonDetailContentProps) {
   const meta = resolveLevelMeta(lesson.level, lesson.levelMeta)
   const resources = lesson.resources
+  // A non-YouTube (or unparseable) link falls back to the still/placeholder.
+  const videoId = resources?.videoUrl ? getYouTubeId(resources.videoUrl) : null
 
   return (
     <div className="space-y-12">
@@ -151,7 +154,9 @@ export function LessonDetailContent({ lesson, actions }: LessonDetailContentProp
         </div>
 
         <div>
-          {lesson.previewUrl ? (
+          {videoId ? (
+            <YouTubeEmbed url={resources!.videoUrl!} title={lesson.title} />
+          ) : lesson.previewUrl ? (
             <img
               src={lesson.previewUrl}
               alt="Lesson preview"
@@ -163,9 +168,9 @@ export function LessonDetailContent({ lesson, actions }: LessonDetailContentProp
               className="aspect-[4/3] w-full bg-neutral-200"
             />
           )}
-          {(resources?.videoUrl || resources?.spotifyUrl) && (
+          {((resources?.videoUrl && !videoId) || resources?.spotifyUrl) && (
             <div className="mt-4 space-y-2">
-              {resources.videoUrl && (
+              {resources.videoUrl && !videoId && (
                 <p className="flex items-center gap-2 text-sm text-ink-soft">
                   <LinkIcon />
                   <span className="font-semibold text-ink">Youtube video:</span>{' '}
