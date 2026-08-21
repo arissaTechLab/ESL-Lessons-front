@@ -1,19 +1,22 @@
-import { PageHeader, Button } from '@/shared/components'
+import { AsyncSection, PageHeader, Button } from '@/shared/components'
+import { useAsync } from '@/hooks'
 import { CtaSection } from '@/features/landing'
 import {
   LessonAccessSection,
   ArticleSection,
 } from '@/features/resources/components'
-import {
-  HOW_TO_ARTICLES,
-  TEACHING_IDEAS_ARTICLES,
-} from '@/features/resources/data/articles'
+import { articlesService } from '@/features/resources/services/articles.service'
 
 /**
  * "How to & Teaching Ideas" resource page. The card grids are blog-style
  * articles that the admin will manage once the backend is wired up.
  */
 export function TeachingIdeasPage() {
+  const howTo = useAsync((signal) => articlesService.bySection('how-to', signal))
+  const teachingIdeas = useAsync((signal) =>
+    articlesService.bySection('teaching-ideas', signal),
+  )
+
   return (
     <>
       <PageHeader
@@ -45,11 +48,16 @@ export function TeachingIdeasPage() {
         </p>
       </LessonAccessSection>
 
-      <ArticleSection title="How to Use These Lessons" articles={HOW_TO_ARTICLES} />
-      <ArticleSection
-        title="Method & Teaching Ideas"
-        articles={TEACHING_IDEAS_ARTICLES}
-      />
+      <AsyncSection state={howTo}>
+        {(articles) => (
+          <ArticleSection title="How to Use These Lessons" articles={articles} />
+        )}
+      </AsyncSection>
+      <AsyncSection state={teachingIdeas}>
+        {(articles) => (
+          <ArticleSection title="Method & Teaching Ideas" articles={articles} />
+        )}
+      </AsyncSection>
 
       <div className="mx-auto max-w-6xl px-4 pb-16 sm:px-6">
         <Button variant="tertiary" className="w-full">
